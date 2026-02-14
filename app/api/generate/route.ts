@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        // Using gemini-1.5-flash which is generally multimodal and fast
+        // Using gemini-1.5-flash-latest to avoid 404 on some endpoints
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
+            model: "gemini-1.5-flash-latest",
         });
 
         const result = await model.generateContent(prompt);
