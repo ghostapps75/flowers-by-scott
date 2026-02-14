@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
         // Try generation (simulated or real)
         let dataUri: string | null = null;
 
+        const genAI = new GoogleGenerativeAI(apiKey);
+
         try {
             // Using gemini-1.5-flash-8b : High speed model
             const model = genAI.getGenerativeModel({
