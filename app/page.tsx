@@ -32,8 +32,8 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.success && data.imageUrl) {
-        setImageSrc(data.imageUrl);
+      if (data.success && data.imageData) {
+        setImageSrc(data.imageData);
       } else {
         alert("Failed to generate image. Please try again.");
       }

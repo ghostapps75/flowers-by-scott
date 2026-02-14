@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "fs";
-import path from "path";
+
 import { constructPrompt } from "@/lib/gemini";
 
 // Ensure the API Key is available
