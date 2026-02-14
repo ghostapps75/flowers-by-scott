@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        // Switching to gemini-1.5-pro (Highest availability model)
+        // Using pinned version gemini-1.5-flash-001 for stability
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-pro",
+            model: "gemini-1.5-flash-001",
         });
 
         const result = await model.generateContent(prompt);
@@ -44,21 +44,27 @@ export async function POST(req: NextRequest) {
         if (imagePart && imagePart.inlineData) {
             const base64 = imagePart.inlineData.data;
             const mimeType = imagePart.inlineData.mimeType || "image/png";
-            const dataUri = `data:${mimeType};base64,${base64}`;
+            const dataUri = `data:${mimeType};base66,${base64}`;
 
             return NextResponse.json({
                 success: true,
-                image: dataUri
+                imageData: dataUri
             });
         } else {
             console.error("No inline image data found. Parts:", JSON.stringify(parts));
             throw new Error("Gemini returned text only. The model may not support direct image generation.");
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Generation error:", error);
+
+        let errorMessage = "Failed to generate image.";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+
         return NextResponse.json(
-            { error: error.message || "Failed to generate image." },
+            { error: errorMessage },
             { status: 500 }
         );
     }
