@@ -83,41 +83,21 @@ export default function Home() {
         </div>
 
         {/* Right: Visualization */}
-        <div className="order-1 md:order-2 flex justify-center relative group min-h-[500px] w-full items-center">
-          <AnimatePresence mode="wait">
-            {isGenerating ? (
+        <div className="order-1 md:order-2 flex flex-col items-center justify-center relative group min-h-[500px] w-full gap-8">
+          <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
+
+          {/* Action Buttons */}
+          <AnimatePresence>
+            {imageSrc && (
               <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-black/50 backdrop-blur-sm rounded-3xl border border-primary/20"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
               >
-                <div className="w-24 h-24 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
-                <p className="text-primary font-serif text-xl animate-pulse">Styling your arrangement...</p>
+                <CopyButton imageSrc={imageSrc} />
               </motion.div>
-            ) : null}
+            )}
           </AnimatePresence>
-
-          <FloatingVase imageSrc={imageSrc} />
-
-          {/* "To Mom" Card - Floats alongside */}
-          <motion.div
-            initial={{ opacity: 0, x: -20, rotate: -5 }}
-            animate={{
-              opacity: 1,
-              x: 0,
-              rotate: -5,
-              y: [0, -5, 0]
-            }}
-            transition={{
-              delay: 0.5,
-              y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-            }}
-            className="absolute -right-4 bottom-12 z-20 bg-[#FDFBF7] text-black p-6 shadow-2xl rounded-sm max-w-[200px] font-serif italic text-lg border border-primary/20 rotate-[-5deg] origin-bottom-left"
-          >
-            &quot;To {recipientName || "Mom"}, with love - Scott&quot;
-          </motion.div>
         </div>
       </div>
 
@@ -126,10 +106,109 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-8 text-center w-full text-primary/30 text-xs font-serif z-10"
+        className="absolute bottom-8 text-center w-full text-muted-foreground/40 text-[10px] font-serif z-10 tracking-widest uppercase"
       >
-        Designed with Gemini 3 Nano Banana Pro
+        Hand-coded with ❤️ for Mom. © 2026 Flowers by Scott.
       </motion.div>
     </main>
+  );
+}
+
+// Separate component for internal state management of "Copied!" status
+function CopyButton({ imageSrc }: { imageSrc: string }) {
+  const [status, setStatus] = useState<"idle" | "copying" | "copied">("idle");
+
+  const handleCopy = async () => {
+    if (!imageSrc || !window.isSecureContext) return;
+    setStatus("copying");
+
+    try {
+      const response = await fetch(imageSrc);
+      const blob = await response.blob();
+
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+        const base64data = reader.result as string;
+
+        // Refined HTML payload
+        const htmlContent = `
+          <div style="font-family: 'Playfair Display', 'Times New Roman', serif; color: #333333; max-width: 600px; text-align: center;">
+            <h2 style="font-size: 28px; margin-bottom: 15px; font-weight: normal; font-style: italic; color: #1a1a1a;">
+              You have received a bouquet.
+            </h2>
+            
+            <p style="margin-bottom: 25px; font-size: 16px; line-height: 1.5;">
+              Create your own digital flower arrangement at: 
+              <br>
+              <a href="https://flowers-by-scott.netlify.app" style="color: #D4AF37; font-weight: bold; text-decoration: none; border-bottom: 1px solid #D4AF37;">flowers-by-scott.netlify.app</a>
+            </p>
+            
+            <img src="${base64data}" alt="Luxury Bouquet by Scott" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #999;">
+              Hand-coded with ❤️ for Mom. © 2026 Flowers by Scott.
+            </p>
+          </div>
+        `;
+
+        const textContent = `You have received a bouquet! Create your own digital flower arrangement at: https://flowers-by-scott.netlify.app`;
+
+        const clipboardItem = new ClipboardItem({
+          "text/html": new Blob([htmlContent], { type: "text/html" }),
+          "text/plain": new Blob([textContent], { type: "text/plain" }),
+        });
+
+        await navigator.clipboard.write([clipboardItem]);
+
+        setStatus("copied");
+        setTimeout(() => setStatus("idle"), 3000);
+      };
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      setStatus("idle");
+      alert("Could not copy to clipboard. Try saving the image instead!");
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <button
+        onClick={handleCopy}
+        disabled={status === "copying"}
+        className="group relative px-12 py-4 bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-[#1A1A1A] font-serif text-xl rounded-full hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.5)] flex items-center justify-center gap-3 overflow-hidden"
+      >
+        {/* Shine effect */}
+        <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12" />
+
+        {status === "copied" ? (
+          <motion.span
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex items-center gap-2 font-bold z-10"
+          >
+            Ready to Paste! ✓
+          </motion.span>
+        ) : (
+          <span className="z-10 flex items-center gap-2">
+            Copy for Email 📧
+          </span>
+        )}
+      </button>
+
+      {/* Tooltip */}
+      <AnimatePresence>
+        {status === "copied" && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="text-xs text-primary/80 font-serif italic"
+          >
+            Open your email and paste (Cmd/Ctrl + V) to share.
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

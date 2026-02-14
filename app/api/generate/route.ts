@@ -5,7 +5,7 @@ import path from "path";
 import { constructPrompt } from "@/lib/gemini";
 
 // Ensure the API Key is available
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(req: NextRequest) {
     if (!apiKey) {

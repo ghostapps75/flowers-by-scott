@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Flower, Lightbulb, PenTool, Sparkles, User } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
-import { getHarmoniousTriplet } from "@/lib/constants";
+import { Flower, Lightbulb, PenTool, Sparkles, Pencil } from "lucide-react";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
+import { getHarmoniousTriplet, ALL_BOTANICALS } from "@/lib/constants";
 
 export type LightingMood = "Golden Hour" | "Midnight Bloom" | "Studio White";
 
@@ -45,6 +45,24 @@ export function Customizer({
         setFlowers(triplet);
     };
 
+    // Generate dynamic placeholders on mount
+    const [placeholders, setPlaceholders] = useState(["Try 'Peonies'...", "Try 'Eucalyptus'...", "Try 'Lavender'..."]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        // Randomly select 3 distinctive options for placeholders
+        const shuffled = [...ALL_BOTANICALS].sort(() => 0.5 - Math.random());
+        // Use setTimeout to push to next tick and avoid synchronous state update warning
+        const timer = setTimeout(() => {
+            setPlaceholders([
+                `Try '${shuffled[0]}'...`,
+                `Try '${shuffled[1]}'...`,
+                `Try '${shuffled[2]}'...`
+            ]);
+        }, 0);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -71,19 +89,20 @@ export function Customizer({
                 </div>
 
                 {/* Recipient Input */}
-                <div className="space-y-3">
-                    <label className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-medium pl-1">
-                        Recipient
+                <div className="space-y-2">
+                    <label htmlFor="recipient-input" className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-medium pl-1">
+                        To:
                     </label>
                     <div className="relative group">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <input
+                            id="recipient-input"
                             type="text"
-                            placeholder="Recipient Name (e.g. Mom)"
+                            aria-label="Recipient Name"
                             value={recipientName}
                             onChange={(e) => setRecipientName(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all placeholder:text-muted-foreground/30 text-foreground"
+                            className="w-full bg-transparent border-b border-primary/30 py-2 pl-0 pr-8 text-3xl font-serif text-primary placeholder:text-primary/30 focus:outline-none focus:border-primary transition-colors"
                         />
+                        <Pencil className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50 pointer-events-none" />
                     </div>
                 </div>
 
@@ -98,7 +117,8 @@ export function Customizer({
                                 <Flower className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                 <input
                                     type="text"
-                                    placeholder={`Flower ${i + 1}`}
+                                    aria-label={`Flower choice ${i + 1}`}
+                                    placeholder={placeholders[i]}
                                     value={flowers[i]}
                                     onChange={(e) => handleFlowerChange(i, e.target.value)}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all placeholder:text-muted-foreground/30 text-foreground"

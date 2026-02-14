@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface FloatingVaseProps {
+export interface FloatingVaseProps {
     imageSrc?: string;
     className?: string;
+    isLoading?: boolean;
 }
 
-export function FloatingVase({ imageSrc, className }: FloatingVaseProps) {
+export function FloatingVase({ imageSrc, className, isLoading }: FloatingVaseProps) {
     return (
         <div className={cn("relative z-10", className)}>
             <motion.div
@@ -23,15 +24,25 @@ export function FloatingVase({ imageSrc, className }: FloatingVaseProps) {
                 }}
                 className="relative"
             >
-                <div className="glass-card aspect-[3/4] w-full max-w-md rounded-2xl overflow-hidden relative shadow-2xl border-white/10 border">
-                    {imageSrc ? (
+                {/* Main Container - Forced Dimensions & Single Source of Truth */}
+                <div className="glass-card w-full h-[600px] max-w-md rounded-2xl overflow-hidden relative shadow-2xl border-white/10 border bg-zinc-900/50">
+
+                    {/* 1. Loading State (Highest Priority) */}
+                    {isLoading ? (
+                        <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center transition-all duration-500">
+                            <div className="w-24 h-24 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+                            <p className="text-primary font-serif text-xl animate-pulse">Styling your arrangement...</p>
+                        </div>
+                    ) : imageSrc ? (
+                        /* 2. Final Image State */
                         <img
                             src={imageSrc}
                             alt="Custom Floral Arrangement"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover animate-in fade-in duration-700"
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-zinc-900/50 text-muted-foreground p-8 text-center flex-col gap-4">
+                        /* 3. Placeholder State (Default) */
+                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-8 text-center flex-col gap-4">
                             <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center">
                                 <span className="text-2xl">💐</span>
                             </div>
@@ -41,8 +52,8 @@ export function FloatingVase({ imageSrc, className }: FloatingVaseProps) {
                         </div>
                     )}
 
-                    {/* Luxury Sheen Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none" />
+                    {/* Luxury Sheen Effect (Overlay) */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none z-30" />
                 </div>
 
                 {/* Shadow */}
