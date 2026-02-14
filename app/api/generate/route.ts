@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        // Using stable alias gemini-1.5-flash
+        // Switching to gemini-1.5-pro (Highest availability model)
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
+            model: "gemini-1.5-pro",
         });
 
         const result = await model.generateContent(prompt);
