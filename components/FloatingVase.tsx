@@ -37,13 +37,16 @@ export function FloatingVase({ imageSrc, className, isLoading }: FloatingVasePro
                     ) : imageSrc ? (
                         /* 2. Final Image State */
                         /* 2. Final Image State */
-                        <div className="relative w-full h-full">
-                            <Image
+                        <div className="relative w-full h-full bg-black/5">
+                            <img
                                 src={imageSrc}
                                 alt="Custom Floral Arrangement"
-                                fill
-                                className="object-cover animate-in fade-in duration-700"
-                                unoptimized
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    console.error("Image load error:", e);
+                                    // Sentry or alert could go here
+                                }}
+                                onLoad={() => console.log("Image loaded successfully")}
                             />
                         </div>
                     ) : (

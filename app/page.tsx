@@ -33,6 +33,7 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success && data.imageData) {
+        console.log("Received image data length:", data.imageData.length);
         setImageSrc(data.imageData);
       } else {
         alert("Failed to generate image. Please try again.");
