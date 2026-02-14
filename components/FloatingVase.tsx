@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface FloatingVaseProps {
@@ -35,11 +36,16 @@ export function FloatingVase({ imageSrc, className, isLoading }: FloatingVasePro
                         </div>
                     ) : imageSrc ? (
                         /* 2. Final Image State */
-                        <img
-                            src={imageSrc}
-                            alt="Custom Floral Arrangement"
-                            className="w-full h-full object-cover animate-in fade-in duration-700"
-                        />
+                        /* 2. Final Image State */
+                        <div className="relative w-full h-full">
+                            <Image
+                                src={imageSrc}
+                                alt="Custom Floral Arrangement"
+                                fill
+                                className="object-cover animate-in fade-in duration-700"
+                                unoptimized
+                            />
+                        </div>
                     ) : (
                         /* 3. Placeholder State (Default) */
                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-8 text-center flex-col gap-4">
