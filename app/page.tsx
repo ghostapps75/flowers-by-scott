@@ -32,10 +32,13 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.success && data.imageData) {
-        console.log("Received image data length:", data.imageData.length);
+      // Handle both formats: old { imageData } or new { image } from Netlify fix
+      if (data.image) {
+        setImageSrc(data.image);
+      } else if (data.imageData) {
         setImageSrc(data.imageData);
       } else {
+        console.error("API Error:", data);
         alert("Failed to generate image. Please try again.");
       }
     } catch (error) {

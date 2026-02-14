@@ -1,29 +1,45 @@
-import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from "next/server";
 
-const apiKey = process.env.GEMINI_API_KEY!;
+// Initialize with the Key from your environment variables
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-export async function GET(req: NextRequest) {
-    if (!apiKey) {
-        return NextResponse.json({ error: "No API Key" }, { status: 500 });
-    }
-
+export async function POST(req: Request) {
     try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        // Access the model manager to list models
-        // Note: SDK structure might differ, checking documentation via current usage would be ideal.
-        // But referencing common usage: genAI.getGenerativeModel is standard. 
-        // We need to use the API directly or a specific manager if SDK doesn't expose listModels at top level.
-        // Actually, pure SDK might not have a direct 'listModels' helper on the client instance easily accessible in older versions, 
-        // but let's try a direct fetch if sdk fails or assume the user updated sdk.
+        const { flowers, recipientName } = await req.json();
 
-        // Using direct REST fetch to be 100% sure what the API says, bypassing SDK wrappers locally
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const data = await response.json();
+        // 1. Double check the key is actually being read
+        if (!process.env.GEMINI_API_KEY) {
+            console.error("CRITICAL ERROR: GEMINI_API_KEY is not set in environment.");
+            return NextResponse.json({ error: "Configuration Error: Missing API Key" }, { status: 500 });
+        }
 
-        return NextResponse.json(data);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        // 2. High-end prompt logic for a beautiful result
+        const prompt = `A luxury floral arrangement featuring ${flowers.join(", ")}. 
+    Style: High-end editorial photography, 8k resolution, cinematic lighting.
+    Include a prominent, large, elegant cream-colored gift card resting at the base of the arrangement. 
+    The card must be clearly legible and occupy a significant portion of the lower foreground. 
+    The text on the card must be large and in a clean script: 'To ${recipientName}, with love - Scott'.`;
+
+        // 3. Generate content and extract the image bits
+        const result = await model.generateContent([prompt]);
+        const response = await result.response;
+
+        // We get the Base64 data directly so we don't have to save a physical file
+        const base64Data = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+        if (!base64Data) {
+            throw new Error("The AI did not return any image data. Try a different flower combo.");
+        }
+
+        return NextResponse.json({
+            image: `data:image/png;base64,${base64Data}`
+        });
 
     } catch (error: any) {
-        return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 });
+        console.error("Detailed Server Error:", error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

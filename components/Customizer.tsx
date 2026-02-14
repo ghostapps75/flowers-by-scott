@@ -48,7 +48,6 @@ export function Customizer({
     // Generate dynamic placeholders on mount
     const [placeholders, setPlaceholders] = useState(["Try 'Peonies'...", "Try 'Eucalyptus'...", "Try 'Lavender'..."]);
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         // Randomly select 3 distinctive options for placeholders
         const shuffled = [...ALL_BOTANICALS].sort(() => 0.5 - Math.random());
