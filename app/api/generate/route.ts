@@ -32,9 +32,10 @@ export async function POST(req: NextRequest) {
         const genAI = new GoogleGenerativeAI(apiKey);
 
         try {
-            // Using discoverable model gemini-2.5-flash
+            // Using gemini-1.5-flash-8b : The high-speed, low-latency stable version
+            // gemini-2.5-flash might be experimental/unstable for this endpoint
             const model = genAI.getGenerativeModel({
-                model: "gemini-2.5-flash",
+                model: "gemini-1.5-flash-8b",
             });
 
             const result = await model.generateContent(prompt);
