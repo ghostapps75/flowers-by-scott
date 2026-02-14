@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
                     ${flowers[0] || 'Bouquet'}
                 </text>
                  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="serif" font-size="40" fill="${lighting === 'Midnight Bloom' ? '#ddd' : '#555'}" opacity="0.6">
-                    & ${flowers[1] || 'Love'}
+                    &amp; ${flowers[1] || 'Love'}
                 </text>
                  <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="serif" font-size="60" fill="${lighting === 'Midnight Bloom' ? '#fff' : '#333'}" opacity="0.8">
                     ${flowers[2] || 'Beauty'}
