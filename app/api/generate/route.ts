@@ -29,16 +29,23 @@ export async function POST(req: NextRequest) {
         // Try generation (simulated or real)
         let dataUri: string | null = null;
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-
         try {
-            // Using gemini-1.5-flash-8b : The high-speed, low-latency stable version
-            // gemini-2.5-flash might be experimental/unstable for this endpoint
+            // Using gemini-1.5-flash-8b : High speed model
             const model = genAI.getGenerativeModel({
                 model: "gemini-1.5-flash-8b",
             });
 
-            const result = await model.generateContent(prompt);
+            // Create a timeout promise that rejects after 5 seconds
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Gemini generation timed out")), 5000)
+            );
+
+            // Race the generation against the timeout
+            const result: any = await Promise.race([
+                model.generateContent(prompt),
+                timeoutPromise
+            ]);
+
             const response = await result.response;
             const parts = response.candidates?.[0]?.content?.parts;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,7 +57,7 @@ export async function POST(req: NextRequest) {
                 dataUri = `data:${mimeType};base64,${base64}`;
             }
         } catch (apiError) {
-            console.warn("Gemini API access failed or returned text only. Using fallback generation.", apiError);
+            console.warn("Gemini API access failed, timed out, or returned text only. Using fallback generation.", apiError);
         }
 
         // If no API image (either 404, text-only, or other error), generate dynamic SVG
