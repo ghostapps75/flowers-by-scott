@@ -145,7 +145,7 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
             <p style="margin-bottom: 25px; font-size: 16px; line-height: 1.5;">
               Create your own digital flower arrangement at: 
               <br>
-              <a href="https://flowers-by-scott.netlify.app" style="color: #D4AF37; font-weight: bold; text-decoration: none; border-bottom: 1px solid #D4AF37;">flowers-by-scott.netlify.app</a>
+              <a href="https://flowersbyscott.netlify.app" style="color: #D4AF37; font-weight: bold; text-decoration: none; border-bottom: 1px solid #D4AF37;">flowersbyscott.netlify.app</a>
             </p>
             
             <img src="${base64data}" alt="Luxury Bouquet by Scott" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
@@ -156,7 +156,7 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
           </div>
         `;
 
-        const textContent = `You have received a bouquet! Create your own digital flower arrangement at: https://flowers-by-scott.netlify.app`;
+        const textContent = `You have received a bouquet! Create your own digital flower arrangement at: https://flowersbyscott.netlify.app`;
 
         const clipboardItem = new ClipboardItem({
           "text/html": new Blob([htmlContent], { type: "text/html" }),
