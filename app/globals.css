@@ -1,12 +1,86 @@
 @import "tailwindcss";
 
+/* Base body styles */
+body {
+  font-family: var(--font-body), "Lora", serif;
+  line-height: 1.7;
+  color: #1a1a1a;
+}
+
+h1, h2, h3 {
+  color: #2e5d34;
+  font-weight: 700;
+}
+
+/* Hero Banner */
+.hero-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75%;
+  margin: 0 auto;
+  overflow: hidden;
+  background-color: #f0f7f0;
+  border-bottom: 5px solid #2e5d34;
+  box-shadow: 0 10px 20px -10px rgba(46, 93, 52, 0.2);
+}
+
+.banner-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Bouquet Creator Interface */
+.bouquet-creator-interface {
+  text-align: center;
+  background-color: #fff;
+  border: 3px dashed #8fbc8f;
+  border-radius: 20px;
+  padding: 50px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Main Button */
+.btn-main {
+  display: inline-block;
+  background-color: #2e5d34;
+  color: #fff;
+  font-family: var(--font-body), "Lora", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px rgba(46, 93, 52, 0.2);
+}
+
+.btn-main:hover {
+  background-color: #d2691e;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(210, 105, 30, 0.3);
+}
+
+/* Site Footer */
+.site-footer {
+  text-align: center;
+  color: #2e5d34;
+  border-top: 1px solid #8fbc8f;
+  margin-top: 60px;
+  padding: 40px 20px;
+  font-size: 0.9rem;
+}
+
 /* Glassmorphism Utilities */
 .glass-panel {
   background: rgba(255, 255, 255, 0.4);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  /* Soft Gold Border */
+  border: 1px solid rgba(143, 188, 143, 0.3);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
@@ -14,8 +88,8 @@
   background: rgba(255, 255, 255, 0.7);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(143, 188, 143, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(46, 93, 52, 0.1);
 }
 
 /* Animations */
@@ -30,7 +104,27 @@
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.2) 50%, rgba(212, 175, 55, 0) 100%);
+  background: linear-gradient(90deg, rgba(46, 93, 52, 0) 0%, rgba(46, 93, 52, 0.2) 50%, rgba(46, 93, 52, 0) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-section {
+    width: 75%;
+  }
+
+  .bouquet-creator-interface {
+    padding: 30px 20px;
+  }
 }

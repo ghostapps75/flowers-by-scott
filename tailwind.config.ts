@@ -9,14 +9,20 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                background: "#FDFBF7", // Soft Cream
-                foreground: "#1A1A1A", // Rich Black
+                background: "#FDFBF7",
+                foreground: "#1A1A1A",
                 primary: {
-                    DEFAULT: "#D4AF37", // Soft Gold
-                    foreground: "#000000",
+                    DEFAULT: "#2E5D34",
+                    foreground: "#FFFFFF",
+                },
+                sage: {
+                    DEFAULT: "#8FBC8F",
+                },
+                warm: {
+                    DEFAULT: "#D2691E",
                 },
                 card: {
-                    DEFAULT: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+                    DEFAULT: "rgba(255, 255, 255, 0.6)",
                     foreground: "#1A1A1A",
                 },
                 popover: {
@@ -24,7 +30,7 @@ const config: Config = {
                     foreground: "#1A1A1A",
                 },
                 secondary: {
-                    DEFAULT: "#ECEae5", // Slightly darker cream for contrast
+                    DEFAULT: "#ECEae5",
                     foreground: "#1A1A1A",
                 },
                 muted: {
@@ -32,16 +38,16 @@ const config: Config = {
                     foreground: "#8A8A8A",
                 },
                 accent: {
-                    DEFAULT: "#D4AF37",
+                    DEFAULT: "#2E5D34",
                     foreground: "#FFFFFF",
                 },
                 destructive: {
                     DEFAULT: "#991B1B",
                     foreground: "#FFFFFF",
                 },
-                border: "rgba(212, 175, 55, 0.2)", // Subtle gold border
+                border: "rgba(143, 188, 143, 0.3)",
                 input: "rgba(255, 255, 255, 0.8)",
-                ring: "#D4AF37",
+                ring: "#2E5D34",
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -49,8 +55,10 @@ const config: Config = {
                 sm: "calc(var(--radius) - 4px)",
             },
             fontFamily: {
-                sans: ["var(--font-sans)", "sans-serif"],
-                serif: ["var(--font-serif)", "serif"],
+                sans: ["var(--font-body)", "sans-serif"],
+                serif: ["var(--font-body)", "serif"],
+                display: ["var(--font-display)", "cursive"],
+                body: ["var(--font-body)", "serif"],
             },
         },
     },
