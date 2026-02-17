@@ -120,14 +120,14 @@ export default function Home() {
           <header className="absolute top-0 left-0 p-6 z-50 w-full pointer-events-none">
             <motion.div
               layoutId="brand-logo"
-              className="w-[200px] h-[60px] relative overflow-hidden rounded-md shadow-sm border border-white/20 pointer-events-auto"
+              className="w-[320px] relative overflow-hidden rounded-md shadow-sm border border-white/20 pointer-events-auto"
               transition={springTransition}
             >
               <Image
-                src="/images/banner.jpg"
+                src={bannerImg}
                 alt="Flowers by Scott"
-                fill
-                className="object-cover object-center"
+                className="w-full h-auto object-contain"
+                placeholder="blur"
               />
             </motion.div>
           </header>
