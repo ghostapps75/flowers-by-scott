@@ -7,6 +7,8 @@ import { getHarmoniousTriplet } from "@/lib/constants";
 import { StemInput } from "./StemInput";
 import { motion, AnimatePresence } from "framer-motion";
 
+export type LightingMood = "Golden Hour" | "Midnight Bloom" | "Studio White";
+
 interface CustomizerProps {
     flowers: string[];
     setFlowers: Dispatch<SetStateAction<string[]>>;
