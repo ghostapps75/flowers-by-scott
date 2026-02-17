@@ -181,7 +181,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="site-footer mt-auto py-4 text-center text-sm text-gray-500">
-        <p>Hand-coded with love for Mom. &copy; 2026 Flowers by Scott.</p>
+        <p>Hand-coded with love by Scott. &copy; 2026 Flowers by Scott.</p>
       </footer>
     </div>
   );
@@ -219,7 +219,7 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
             <img src="${base64data}" alt="Bouquet by Scott" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
 
             <p style="margin-top: 30px; font-size: 12px; color: #999;">
-              Hand-coded with love for Mom. &copy; 2026 Flowers by Scott.
+              Hand-coded with love by Scott. &copy; 2026 Flowers by Scott.
             </p>
           </div>
         `;
