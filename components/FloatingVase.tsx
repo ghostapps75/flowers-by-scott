@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export interface FloatingVaseProps {
     imageSrc?: string;
@@ -24,25 +25,18 @@ export function FloatingVase({ imageSrc, className, isLoading }: FloatingVasePro
                     ) : imageSrc ? (
                         /* 2. Final Image State */
                         <div className="relative w-full h-full bg-black/5">
-                            <img
+                            <Image
                                 src={imageSrc}
                                 alt="Custom Floral Arrangement"
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                    console.error("Image load error:", e);
-                                }}
-                                onLoad={() => console.log("Image loaded successfully")}
+                                fill
+                                className="object-cover"
+                                unoptimized
                             />
                         </div>
                     ) : (
-                        /* 3. Placeholder State (Default) */
-                        <div className="absolute inset-0 flex items-center justify-center p-8 text-center flex-col gap-4 bg-background/50">
-                            <div className="w-16 h-16 rounded-full border-2 border-sage/40 flex items-center justify-center">
-                                <span className="text-3xl">💐</span>
-                            </div>
-                            <p className="font-serif text-lg italic text-primary/60">
-                                Your bespoke creation will appear here.
-                            </p>
+                        /* 3. Empty State / Placeholder (Optional - or just render nothing) */
+                        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+                            <p className="text-muted-foreground/50 font-serif italic">Your arrangement will appear here</p>
                         </div>
                     )}
                 </div>

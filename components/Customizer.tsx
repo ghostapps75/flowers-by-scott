@@ -1,16 +1,15 @@
 "use client";
 
-import { Flower, Lightbulb, PenTool, Sparkles, Pencil } from "lucide-react";
-import { Dispatch, SetStateAction, useState, useEffect } from "react";
-import { getHarmoniousTriplet, ALL_BOTANICALS } from "@/lib/constants";
-
-export type LightingMood = "Golden Hour" | "Midnight Bloom" | "Studio White";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Sparkles, Wand2, AlertCircle } from "lucide-react";
+import { getHarmoniousTriplet } from "@/lib/constants";
+// import { FieldGuideModal } from "./FieldGuideModal"; 
+import { StemInput } from "./StemInput";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CustomizerProps {
     flowers: string[];
     setFlowers: Dispatch<SetStateAction<string[]>>;
-    lighting: LightingMood;
-    setLighting: Dispatch<SetStateAction<LightingMood>>;
     recipientName: string;
     setRecipientName: Dispatch<SetStateAction<string>>;
     senderName: string;
@@ -19,17 +18,9 @@ interface CustomizerProps {
     isGenerating: boolean;
 }
 
-const LIGHTING_OPTIONS: LightingMood[] = [
-    "Golden Hour",
-    "Midnight Bloom",
-    "Studio White",
-];
-
 export function Customizer({
     flowers,
     setFlowers,
-    lighting,
-    setLighting,
     recipientName,
     setRecipientName,
     senderName,
@@ -37,157 +28,200 @@ export function Customizer({
     onGenerate,
     isGenerating,
 }: CustomizerProps) {
+    const [activeInputIndex, setActiveInputIndex] = useState<number | null>(null);
+    // const [isFieldGuideOpen, setIsFieldGuideOpen] = useState(false);
+    // const [fieldGuideTargetIndex, setFieldGuideTargetIndex] = useState<number>(0);
+    const [validationError, setValidationError] = useState<string | null>(null);
+
+    // --- Content Safety Guardrails ---
+    const validateContent = (text: string): boolean => {
+        // PERMITTED: "weed", "pills", "mushrooms", "coke" (Client Request "Edgy Exception")
+        // FORBIDDEN: Violence, Hate, Explicit Pornography
+        const BLACKLIST_REGEX = /(gun|bomb|tank|rifle|ammo|kill|blood|shooting|war|murder|nazi|hitler|slur|sex|porn|nude|naked|xxx)/i;
+
+        if (BLACKLIST_REGEX.test(text)) {
+            setValidationError("Let's keep the bouquet beautiful. Please avoid violent or inappropriate terms.");
+            return false;
+        }
+        setValidationError(null);
+        return true;
+    };
+
     const handleFlowerChange = (index: number, value: string) => {
+        // Real-time validation
+        validateContent(value);
+
         const newFlowers = [...flowers];
         newFlowers[index] = value;
         setFlowers(newFlowers);
     };
 
-    const handleSurpriseMe = () => {
-        const triplet = getHarmoniousTriplet();
-        setFlowers(triplet);
+    const handleAutoSuggest = () => {
+        const suggestion = getHarmoniousTriplet();
+        setFlowers(suggestion);
+        setValidationError(null);
     };
 
-    // Generate dynamic placeholders on mount
-    const [placeholders, setPlaceholders] = useState(["Try 'Peonies'...", "Try 'Eucalyptus'...", "Try 'Lavender'..."]);
+    /*
+    const openFieldGuide = (index: number) => {
+        setFieldGuideTargetIndex(index);
+        setIsFieldGuideOpen(true);
+    };
 
-    useEffect(() => {
-        const shuffled = [...ALL_BOTANICALS].sort(() => 0.5 - Math.random());
-        const timer = setTimeout(() => {
-            setPlaceholders([
-                `Try '${shuffled[0]}'...`,
-                `Try '${shuffled[1]}'...`,
-                `Try '${shuffled[2]}'...`
-            ]);
-        }, 0);
-        return () => clearTimeout(timer);
-    }, []);
+    const handleFieldGuideSelect = (flower: string) => {
+        const newFlowers = [...flowers];
+        newFlowers[fieldGuideTargetIndex] = flower;
+        setFlowers(newFlowers);
+    };
+    */
+
+    // Block generation if error exists
+    const hasError = !!validationError;
 
     return (
-        <div className="bouquet-creator-interface text-left">
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-primary flex items-center gap-2 font-serif">
-                        <PenTool className="w-5 h-5" />
-                        Customize
-                    </h2>
-                    <button
-                        onClick={handleSurpriseMe}
-                        className="text-xs flex items-center gap-1 text-primary hover:text-warm transition-colors border border-sage px-3 py-1.5 rounded-full hover:bg-primary/5"
-                        title="Surprise Me"
-                    >
-                        <Sparkles className="w-3 h-3" />
-                        Surprise
-                    </button>
-                </div>
+        <div className="bg-white rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden relative z-10">
+            <div className="p-8 md:p-12">
+                {/* Field Guide Modal */}
+                {/* <FieldGuideModal
+                    isOpen={isFieldGuideOpen}
+                    onClose={() => setIsFieldGuideOpen(false)}
+                    onSelect={handleFieldGuideSelect}
+                    availableFlowers={FLOWER_OPTIONS}
+                /> */}
 
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                    Type your flower choices below, pick a lighting mood, then tap <strong className="text-primary">Design Arrangement</strong> to generate your bouquet. Or hit <strong className="text-primary">Surprise</strong> for a curated suggestion!
-                </p>
+                <div className="flex flex-col gap-8">
 
-                {/* Recipient Input */}
-                <div className="space-y-2">
-                    <label htmlFor="recipient-input" className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-semibold pl-1">
-                        To:
-                    </label>
-                    <div className="relative group">
-                        <input
-                            id="recipient-input"
-                            type="text"
-                            aria-label="Recipient Name"
-                            placeholder="Recipient name"
-                            value={recipientName}
-                            onChange={(e) => setRecipientName(e.target.value)}
-                            className="w-full bg-transparent border-b-2 border-sage/50 py-2 pl-0 pr-8 text-2xl md:text-3xl font-display text-primary placeholder:text-sage/50 focus:outline-none focus:border-primary transition-colors"
-                        />
-                        <Pencil className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-sage pointer-events-none" />
-                    </div>
-                </div>
+                    {/* Header Section */}
+                    <div className="space-y-4 text-center md:text-left">
+                        <div>
+                            <h2 className="font-display text-4xl md:text-5xl text-black tracking-tight mb-2">Design Your Bouquet</h2>
+                            <p className="text-gray-500 font-serif italic text-lg">Curate your creation, stem by stem.</p>
+                        </div>
 
-                {/* Sender Input */}
-                <div className="space-y-2">
-                    <label htmlFor="sender-input" className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-semibold pl-1">
-                        From:
-                    </label>
-                    <div className="relative group">
-                        <input
-                            id="sender-input"
-                            type="text"
-                            aria-label="Sender Name"
-                            placeholder="Your name"
-                            value={senderName}
-                            onChange={(e) => setSenderName(e.target.value)}
-                            className="w-full bg-transparent border-b-2 border-sage/50 py-2 pl-0 pr-8 text-2xl md:text-3xl font-display text-primary placeholder:text-sage/50 focus:outline-none focus:border-primary transition-colors"
-                        />
-                        <Pencil className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-sage pointer-events-none" />
-                    </div>
-                </div>
-
-                {/* Flower Inputs */}
-                <div className="space-y-3">
-                    <label className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-semibold pl-1">
-                        Floral Selection
-                    </label>
-                    <div className="space-y-3">
-                        {[0, 1, 2].map((i) => (
-                            <div key={i} className="space-y-1">
-                                <div className="relative group">
-                                    <Flower className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage group-focus-within:text-primary transition-colors" />
-                                    <input
-                                        type="text"
-                                        aria-label={`Flower choice ${i + 1}`}
-                                        placeholder={placeholders[i]}
-                                        value={flowers[i]}
-                                        onChange={(e) => handleFlowerChange(i, e.target.value)}
-                                        className="w-full bg-white border border-sage/30 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-sage/50 text-foreground shadow-sm"
-                                    />
-                                </div>
+                        {/* Instruction Block */}
+                        <div className="bg-[#f8f8f8] p-6 rounded-lg border border-gray-100/50">
+                            <h3 className="font-bold text-gray-800 uppercase tracking-widest text-xs mb-2">How to Select Your Stems:</h3>
+                            <p className="text-sm text-gray-600 font-serif italic mb-3">
+                                Type a stem or use Auto-Suggest to be creative with non-traditional items (keep it respectful!).
+                            </p>
+                            <div className="flex gap-4 text-xs font-bold uppercase tracking-widest text-primary/60">
+                                {/* <button onClick={() => openFieldGuide(0)} className="hover:text-primary hover:underline flex items-center gap-1">
+                                    <span className="w-1 h-1 rounded-full bg-current"></span> Field Guide
+                                </button> */}
+                                <button onClick={handleAutoSuggest} className="hover:text-primary hover:underline flex items-center gap-1">
+                                    <span className="w-1 h-1 rounded-full bg-current"></span> Auto-Suggest
+                                </button>
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
 
-                {/* Lighting Options */}
-                <div className="space-y-3">
-                    <label className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-semibold pl-1">
-                        Ambience
-                    </label>
-                    <div className="grid grid-cols-1 gap-2">
-                        {LIGHTING_OPTIONS.map((mood) => (
+                    {/* PERSONALIZATION (Moved to Top) */}
+                    <div className="space-y-6 pb-6 border-b border-gray-100">
+                        <label className="block text-sm font-bold tracking-widest uppercase text-gray-400">
+                            The Details
+                        </label>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-1">
+                                <span className="text-xs text-gray-400 uppercase font-bold ml-1">To</span>
+                                <input
+                                    type="text"
+                                    placeholder="Recipient Name"
+                                    value={recipientName}
+                                    onChange={(e) => setRecipientName(e.target.value)}
+                                    className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 font-serif focus:border-black focus:ring-1 focus:ring-black transition-all outline-none shadow-sm placeholder:text-gray-300"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-xs text-gray-400 uppercase font-bold ml-1">From</span>
+                                <input
+                                    type="text"
+                                    placeholder="Sender Name"
+                                    value={senderName}
+                                    onChange={(e) => setSenderName(e.target.value)}
+                                    className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 font-serif focus:border-black focus:ring-1 focus:ring-black transition-all outline-none shadow-sm placeholder:text-gray-300"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* FLOWER INPUTS */}
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                            <label className="block text-sm font-bold tracking-widest uppercase text-gray-400">
+                                Selected Stems
+                            </label>
                             <button
-                                key={mood}
-                                onClick={() => setLighting(mood)}
-                                className={`
-                                    flex items-center gap-3 p-3 rounded-xl border text-sm transition-all text-left group
-                                    ${lighting === mood
-                                        ? "bg-primary/10 border-primary/40 text-primary shadow-sm"
-                                        : "bg-white/50 border-sage/20 text-muted-foreground hover:bg-primary/5 hover:border-sage/40"
-                                    }
-                                `}
+                                onClick={handleAutoSuggest}
+                                className="bg-black text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-300 flex items-center gap-2 border border-transparent hover:border-accent/50 group"
+                                title="Suggest a harmonious combination"
                             >
-                                <Lightbulb className={`w-4 h-4 transition-colors ${lighting === mood ? "text-primary fill-primary/20" : "text-sage group-hover:text-primary"}`} />
-                                <span className={lighting === mood ? "font-semibold" : ""}>{mood}</span>
+                                <Wand2 className="w-3 h-3 group-hover:rotate-45 transition-transform text-accent" />
+                                <span>Auto-Suggest</span>
                             </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                        </div>
 
-            <div className="mt-8">
-                <button
-                    onClick={onGenerate}
-                    disabled={isGenerating}
-                    className="btn-main w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isGenerating ? (
-                        <>
-                            <Sparkles className="w-5 h-5 animate-spin" />
-                            Crafting...
-                        </>
-                    ) : (
-                        "Design Arrangement"
-                    )}
-                </button>
+                        {/* Validation Error Message */}
+                        <AnimatePresence>
+                            {validationError && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="bg-red-50 text-destructive border border-destructive/20 px-4 py-3 rounded-md flex items-center gap-2 text-sm font-serif"
+                                >
+                                    <AlertCircle className="w-4 h-4" />
+                                    {validationError}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        <div className="flex flex-col gap-5">
+                            {flowers.map((flower, index) => (
+                                <StemInput
+                                    key={index}
+                                    value={flower}
+                                    onChange={(val) => handleFlowerChange(index, val)}
+                                    // onOpenFieldGuide={() => openFieldGuide(index)} // Disabled for launch
+                                    placeholder={`Flower Choice #${index + 1}`}
+                                    isActive={activeInputIndex === index}
+                                    onFocus={() => setActiveInputIndex(index)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+
+
+                    {/* GENERATE BUTTON */}
+                    <button
+                        onClick={onGenerate}
+                        disabled={isGenerating || flowers.every(f => !f) || hasError}
+                        className={`
+                w-full py-5 rounded-lg font-display text-3xl tracking-wide transition-all duration-300
+                relative overflow-hidden group shadow-lg
+                ${isGenerating || hasError
+                                ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                                : "bg-black text-white hover:bg-neutral-900 hover:shadow-xl hover:scale-[1.01]"
+                            }
+              `}
+                    >
+                        <span className="relative z-10 flex items-center justify-center gap-3">
+                            {isGenerating ? (
+                                <>
+                                    <span className="animate-pulse font-sans text-sm uppercase tracking-widest text-neutral-500">Arranging Blooms...</span>
+                                    <Sparkles className="w-5 h-5 animate-spin text-neutral-500" />
+                                </>
+                            ) : (
+                                <>
+                                    <span>Paint My Bouquet</span>
+                                    <Sparkles className="w-6 h-6 text-accent group-hover:rotate-12 transition-transform" />
+                                </>
+                            )}
+                        </span>
+                    </button>
+
+                </div>
             </div>
         </div>
     );

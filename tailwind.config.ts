@@ -9,45 +9,39 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                background: "#FDFBF7",
-                foreground: "#1A1A1A",
+                background: "var(--color-background)",
+                foreground: "var(--color-foreground)",
                 primary: {
-                    DEFAULT: "#2E5D34",
-                    foreground: "#FFFFFF",
+                    DEFAULT: "var(--color-primary)",
+                    foreground: "var(--color-background)",
                 },
-                sage: {
-                    DEFAULT: "#8FBC8F",
+                secondary: {
+                    DEFAULT: "var(--color-secondary)",
+                    foreground: "var(--color-foreground)",
                 },
-                warm: {
-                    DEFAULT: "#D2691E",
+                accent: {
+                    DEFAULT: "var(--color-accent)",
+                    foreground: "var(--color-background)",
+                },
+                muted: {
+                    DEFAULT: "var(--color-muted)",
+                    foreground: "var(--color-foreground)",
                 },
                 card: {
                     DEFAULT: "rgba(255, 255, 255, 0.6)",
-                    foreground: "#1A1A1A",
+                    foreground: "var(--color-foreground)",
                 },
                 popover: {
-                    DEFAULT: "#FFFFFF",
-                    foreground: "#1A1A1A",
-                },
-                secondary: {
-                    DEFAULT: "#ECEae5",
-                    foreground: "#1A1A1A",
-                },
-                muted: {
-                    DEFAULT: "#F0EFEA",
-                    foreground: "#8A8A8A",
-                },
-                accent: {
-                    DEFAULT: "#2E5D34",
-                    foreground: "#FFFFFF",
+                    DEFAULT: "var(--color-background)",
+                    foreground: "var(--color-foreground)",
                 },
                 destructive: {
-                    DEFAULT: "#991B1B",
+                    DEFAULT: "#991B1B", // Keep static for errors
                     foreground: "#FFFFFF",
                 },
                 border: "rgba(143, 188, 143, 0.3)",
                 input: "rgba(255, 255, 255, 0.8)",
-                ring: "#2E5D34",
+                ring: "var(--color-primary)",
             },
             borderRadius: {
                 lg: "var(--radius)",

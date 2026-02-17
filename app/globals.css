@@ -1,45 +1,69 @@
 @import "tailwindcss";
 
-/* Base body styles */
-body {
-  font-family: var(--font-body), "Lora", serif;
-  line-height: 1.7;
-  color: #1a1a1a;
+:root {
+  /* Premium Glossy Magazine Theme - Static */
+  --color-background: #FFFFFF;
+  /* Pure White */
+  --color-foreground: #1A1A1A;
+  /* Charcoal */
+  --color-primary: #111111;
+  /* Deep Black */
+  --color-secondary: #F5F5F7;
+  /* Light Gray */
+  --color-accent: #D4AF37;
+  /* Gold */
+  --color-muted: #E5E5E5;
+  --color-input: #FFFFFF;
+  --color-destructive: #9B1C1C;
+
+  --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
 }
 
-h1, h2, h3 {
+/* Smooth Base Transitions */
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Base body styles */
+body {
+  font-family: var(--font-serif), "Times New Roman", serif;
+  line-height: 1.6;
+  color: var(--color-foreground);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
   color: #2e5d34;
   font-weight: 700;
 }
 
-/* Hero Banner */
+/* Hero Banner - Pre-Launch Polish */
 .hero-section {
+  width: 100%;
+  height: 210px;
+  /* Reduced to 25% smaller */
   display: flex;
+  /* Center the content */
   justify-content: center;
   align-items: center;
-  width: 75%;
-  margin: 0 auto;
+  background-color: #f5f5f7;
+  /* Keep matte background */
+  border-bottom: 1px solid var(--color-muted);
   overflow: hidden;
-  background-color: #f0f7f0;
-  border-bottom: 5px solid #2e5d34;
-  box-shadow: 0 10px 20px -10px rgba(46, 93, 52, 0.2);
 }
 
 .banner-img {
-  display: block;
   width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-/* Bouquet Creator Interface */
-.bouquet-creator-interface {
-  text-align: center;
-  background-color: #fff;
-  border: 3px dashed #8fbc8f;
-  border-radius: 20px;
-  padding: 50px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.9;
 }
 
 /* Main Button */
@@ -110,9 +134,12 @@ h1, h2, h3 {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }

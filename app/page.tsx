@@ -1,18 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Customizer, LightingMood } from "@/components/Customizer";
+import { Customizer } from "@/components/Customizer";
 import { FloatingVase } from "@/components/FloatingVase";
 import { motion, AnimatePresence } from "framer-motion";
 import { getHarmoniousTriplet } from "@/lib/constants";
+import Image from "next/image";
+import bannerImg from "./banner.jpg"; // Import local image for intrinsic dimensions
+
+// Spring transition for the "bouncy" feel
+const springTransition = {
+  type: "spring",
+  stiffness: 120,
+  damping: 20,
+} as const;
 
 export default function Home() {
   const [flowers, setFlowers] = useState<string[]>(["", "", ""]);
-  const [lighting, setLighting] = useState<LightingMood>("Golden Hour");
   const [recipientName, setRecipientName] = useState("");
   const [senderName, setSenderName] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+  // Track if we have ever generated to switch layout permanently for this session
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   // Prepopulate on load
   useEffect(() => {
@@ -21,6 +31,7 @@ export default function Home() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
+    setHasGenerated(true); // Switch layout immediately
 
     try {
       const response = await fetch("/api/generate", {
@@ -28,12 +39,11 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ flowers, lighting, recipientName, senderName }),
+        body: JSON.stringify({ flowers, recipientName, senderName }),
       });
 
       const data = await response.json();
 
-      // Handle both formats: old { imageData } or new { image } from Netlify fix
       if (data.image) {
         setImageSrc(data.image);
       } else if (data.imageData) {
@@ -51,67 +61,126 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Banner */}
-      <header className="hero-section">
-        <img
-          src="/images/banner.jpg"
-          alt="Flowers by Scott - Design your digital bouquet. Copy & paste directly to email!"
-          className="banner-img"
-        />
-      </header>
-
-      {/* Main Content */}
-      <main className="w-[92%] max-w-[1200px] mx-auto py-10 md:py-16">
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          {/* Left: Customizer */}
+    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+      {/* 
+        LAYOUT STATE 1: INITIAL 
+        Banner is large and central. 
+        We use layoutId="brand-logo" to connect it to the header version.
+      */}
+      {!hasGenerated && (
+        <div className="flex-grow flex flex-col items-center justify-center p-4">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            layoutId="brand-container"
+            className="w-full max-w-4xl flex flex-col items-center gap-8"
           >
-            <Customizer
-              flowers={flowers}
-              setFlowers={setFlowers}
-              lighting={lighting}
-              setLighting={setLighting}
-              recipientName={recipientName}
-              setRecipientName={setRecipientName}
-              senderName={senderName}
-              setSenderName={setSenderName}
-              onGenerate={handleGenerate}
-              isGenerating={isGenerating}
-            />
-          </motion.div>
+            {/* Large Banner */}
+            <motion.div
+              layoutId="brand-logo"
+              className="w-full relative overflow-hidden rounded-xl shadow-md border border-white/20"
+              transition={springTransition}
+            >
+              <Image
+                src={bannerImg}
+                alt="Flowers by Scott"
+                className="w-full h-auto object-contain"
+                priority
+                placeholder="blur"
+              />
+            </motion.div>
 
-          {/* Right: Visualization */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex flex-col items-center gap-6"
-          >
-            <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
-
-            {/* Action Buttons */}
-            <AnimatePresence>
-              {imageSrc && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                >
-                  <CopyButton imageSrc={imageSrc} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Initial Customizer Position */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="w-full max-w-xl bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/40 shadow-sm"
+            >
+              <Customizer
+                flowers={flowers}
+                setFlowers={setFlowers}
+                recipientName={recipientName}
+                setRecipientName={setRecipientName}
+                senderName={senderName}
+                setSenderName={setSenderName}
+                onGenerate={handleGenerate}
+                isGenerating={isGenerating}
+              />
+            </motion.div>
           </motion.div>
         </div>
-      </main>
+      )}
+
+      {/* 
+        LAYOUT STATE 2: GENERATED 
+        Banner moves to Header. Content is 2-column.
+      */}
+      {hasGenerated && (
+        <>
+          {/* Header Area */}
+          <header className="absolute top-0 left-0 p-6 z-50 w-full pointer-events-none">
+            <motion.div
+              layoutId="brand-logo"
+              className="w-[200px] h-[60px] relative overflow-hidden rounded-md shadow-sm border border-white/20 pointer-events-auto"
+              transition={springTransition}
+            >
+              <Image
+                src="/images/banner.jpg"
+                alt="Flowers by Scott"
+                fill
+                className="object-cover object-center"
+              />
+            </motion.div>
+          </header>
+
+          <main className="w-[92%] max-w-[1200px] mx-auto py-24 md:py-32 flex-grow min-h-[60vh]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+
+              {/* Left: Customizer (Moved) */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <Customizer
+                  flowers={flowers}
+                  setFlowers={setFlowers}
+                  recipientName={recipientName}
+                  setRecipientName={setRecipientName}
+                  senderName={senderName}
+                  setSenderName={setSenderName}
+                  onGenerate={handleGenerate}
+                  isGenerating={isGenerating}
+                />
+              </motion.div>
+
+              {/* Right: Result Area (Staggered Entrance) */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }} // Staggered delay
+                className="flex flex-col items-center gap-6"
+              >
+                <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
+
+                <AnimatePresence>
+                  {imageSrc && !isGenerating && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                    >
+                      <CopyButton imageSrc={imageSrc} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </div>
+          </main>
+        </>
+      )}
 
       {/* Footer */}
-      <footer className="site-footer">
+      <footer className="site-footer mt-auto py-4 text-center text-sm text-gray-500">
         <p>Hand-coded with love for Mom. &copy; 2026 Flowers by Scott.</p>
       </footer>
     </div>
