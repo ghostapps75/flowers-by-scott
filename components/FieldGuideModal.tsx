@@ -1,8 +1,9 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { FIELD_GUIDE_SHEETS } from "@/data/fieldGuideData";
 import { FieldGuidePage } from "./FieldGuidePage";
 
@@ -14,47 +15,37 @@ interface FieldGuideModalProps {
 }
 
 export function FieldGuideModal({ isOpen, onClose, onSelect }: FieldGuideModalProps) {
-    const [currentIndex, setCurrentIndex] = useState(0);
 
-    const totalSheets = FIELD_GUIDE_SHEETS.length;
-
-    const nextPage = useCallback(() => {
-        if (currentIndex < totalSheets - 1) {
-            setCurrentIndex(prev => prev + 1);
-        }
-    }, [currentIndex, totalSheets]);
-
-    const prevPage = useCallback(() => {
-        if (currentIndex > 0) {
-            setCurrentIndex(prev => prev - 1);
-        }
-    }, [currentIndex]);
-
-    // Keyboard navigation
+    // Close on Escape key
     useEffect(() => {
         if (!isOpen) return;
-
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "ArrowRight") nextPage();
-            if (e.key === "ArrowLeft") prevPage();
             if (e.key === "Escape") onClose();
         };
-
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [isOpen, nextPage, prevPage, onClose]);
+    }, [isOpen, onClose]);
 
-    return (
+    // Use Portal to escape z-index trap
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    if (!mounted) return null;
+
+    return createPortal(
         <AnimatePresence mode="wait">
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center">
-                    {/* Dark Backdrop with Blur */}
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-auto">
+                    {/* Light Backdrop with Blur (Paper effect) */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+                        className="absolute inset-0 bg-[#F5F5F7]/95 backdrop-blur-xl"
                     />
 
                     {/* Main Content Container */}
@@ -63,70 +54,37 @@ export function FieldGuideModal({ isOpen, onClose, onSelect }: FieldGuideModalPr
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ type: "spring", duration: 0.5, bounce: 0.1 }}
-                        className="relative z-[101] w-full h-full flex items-center justify-center p-4 md:p-8 pointer-events-none"
+                        className="relative z-[10000] w-full h-full pointer-events-none"
                     >
-                        {/* Close Button */}
+                        {/* Close Button (Fixed) */}
                         <button
                             onClick={onClose}
-                            className="absolute top-6 right-6 p-3 text-white/50 hover:text-white bg-black/20 hover:bg-white/10 rounded-full transition-all pointer-events-auto z-[110]"
+                            className="fixed top-6 right-6 p-3 text-emerald-900/50 hover:text-emerald-900 bg-white/20 hover:bg-white/40 rounded-full transition-all pointer-events-auto z-[10010]"
                             aria-label="Close Field Guide"
                             title="Close Field Guide"
                         >
-                            <X className="w-6 h-6" />
+                            <X className="w-8 h-8" />
                         </button>
 
-                        {/* Previous Button */}
-                        <button
-                            onClick={prevPage}
-                            disabled={currentIndex === 0}
-                            className={`absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-all pointer-events-auto z-[110] disabled:opacity-0 disabled:pointer-events-none hover:scale-110 active:scale-95`}
-                            aria-label="Previous Page"
-                            title="Previous Page"
-                        >
-                            <ChevronLeft className="w-8 h-8 md:w-10 md:h-10" />
-                        </button>
-
-                        {/* Next Button */}
-                        <button
-                            onClick={nextPage}
-                            disabled={currentIndex === totalSheets - 1}
-                            className={`absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-all pointer-events-auto z-[110] disabled:opacity-0 disabled:pointer-events-none hover:scale-110 active:scale-95`}
-                            aria-label="Next Page"
-                            title="Next Page"
-                        >
-                            <ChevronRight className="w-8 h-8 md:w-10 md:h-10" />
-                        </button>
-
-                        {/* The Light Table Sheet */}
-                        <div className="pointer-events-auto relative shadow-2xl shadow-black/50">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentIndex}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    transition={{ duration: 0.2 }}
-                                >
+                        {/* Scrollable Container */}
+                        <div className="w-full h-full overflow-y-auto pointer-events-auto custom-scrollbar">
+                            <div className="pb-32">
+                                {FIELD_GUIDE_SHEETS.map((sheet, index) => (
                                     <FieldGuidePage
-                                        sheet={FIELD_GUIDE_SHEETS[currentIndex]}
+                                        key={sheet.id}
+                                        sheet={sheet}
                                         onSelect={(flower) => {
                                             onSelect(flower);
-                                            // Optional: close on select? User didn't specify, but often good flow.
-                                            // Keeping open allows selecting multiple.
                                         }}
                                     />
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
-
-                        {/* Footer / Page Indicator */}
-                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 font-mono text-xs tracking-widest pointer-events-auto">
-                            SHEET {currentIndex + 1} OF {totalSheets}
+                                ))}
+                            </div>
                         </div>
 
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }

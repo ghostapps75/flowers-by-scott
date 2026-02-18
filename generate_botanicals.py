@@ -71,5 +71,35 @@ def generate_assets():
 
     print("\n[COMPLETE] All sheets generated in 'botanical_assets' folder.")
 
+# Test Prompt for Sheet 01 (Stricter Grid)
+test_prompt = "A professional studio photography contact sheet featuring EXACTLY 9 distinct botanical stems arranged in a precise 3x3 grid. Stems: Pink Peony, King Protea, Black Baccara Rose, White Orchid, Japanese Anemone, Juliet Rose, Ranunculus, Chocolate Cosmos, Dinnerplate Dahlia. Layout: 3 rows of 3 flowers each. Total count: 9 flowers. Style: High-end editorial film photography, Hasselblad medium format, sharp focus, bright commercial lighting. IMPORTANT: Isolated on pure white background, no text, no labels, no film borders, no sprocket holes. The stems must be fully contained within their 3x3 grid cells. Do not add extra flowers."
+
+test_filename = "Sheet_01_Test.png"
+
+def generate_test_sheet():
+    folder = 'public/images/field_guide' # Save directly to public folder
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(f"DEBUG: Created folder '{folder}'")
+
+    print(f"--- Attempting Test: {test_filename} ---")
+    try:
+        response = client.models.generate_content(
+            model=MODEL_ID,
+            contents=test_prompt,
+            config=types.GenerateContentConfig(
+                response_modalities=['Image']
+            )
+        )
+            
+        for part in response.parts:
+            if image := part.as_image():
+                image.save(os.path.join(folder, test_filename))
+                print(f"SUCCESS: Saved {test_filename}")
+
+    except Exception as e:
+        print(f"FAILED {test_filename}: {e}")
+
 if __name__ == "__main__":
-    generate_assets()
+    # generate_assets() # Original full batch
+    generate_test_sheet() # Run test only

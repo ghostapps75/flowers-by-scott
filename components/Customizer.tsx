@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Sparkles, Wand2, AlertCircle } from "lucide-react";
 import { getHarmoniousTriplet } from "@/lib/constants";
-// import { FieldGuideModal } from "./FieldGuideModal"; 
+import { FieldGuideModal } from "./FieldGuideModal";
 import { StemInput } from "./StemInput";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -31,8 +31,8 @@ export function Customizer({
     isGenerating,
 }: CustomizerProps) {
     const [activeInputIndex, setActiveInputIndex] = useState<number | null>(null);
-    // const [isFieldGuideOpen, setIsFieldGuideOpen] = useState(false);
-    // const [fieldGuideTargetIndex, setFieldGuideTargetIndex] = useState<number>(0);
+    const [isFieldGuideOpen, setIsFieldGuideOpen] = useState(false);
+    const [fieldGuideTargetIndex, setFieldGuideTargetIndex] = useState<number>(0);
     const [validationError, setValidationError] = useState<string | null>(null);
 
     // --- Content Safety Guardrails ---
@@ -64,7 +64,6 @@ export function Customizer({
         setValidationError(null);
     };
 
-    /*
     const openFieldGuide = (index: number) => {
         setFieldGuideTargetIndex(index);
         setIsFieldGuideOpen(true);
@@ -74,8 +73,9 @@ export function Customizer({
         const newFlowers = [...flowers];
         newFlowers[fieldGuideTargetIndex] = flower;
         setFlowers(newFlowers);
+        // Optional: Close modal after selection
+        setIsFieldGuideOpen(false);
     };
-    */
 
     // Block generation if error exists
     const hasError = !!validationError;
@@ -84,20 +84,50 @@ export function Customizer({
         <div className="bg-white rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden relative z-10">
             <div className="p-8 md:p-12">
                 {/* Field Guide Modal */}
-                {/* <FieldGuideModal
+                <FieldGuideModal
                     isOpen={isFieldGuideOpen}
                     onClose={() => setIsFieldGuideOpen(false)}
                     onSelect={handleFieldGuideSelect}
-                    availableFlowers={FLOWER_OPTIONS}
-                /> */}
+                    availableFlowers={[]} // Pass empty or actual list if needed
+                />
 
                 <div className="flex flex-col gap-8">
 
                     {/* Header Section */}
-                    <div className="space-y-4 text-center md:text-left">
+                    <div className="space-y-8 text-center md:text-left">
                         <div>
                             <h2 className="font-display text-4xl md:text-5xl text-black tracking-tight mb-2">Design Your Bouquet</h2>
                             <p className="text-gray-500 font-serif italic text-lg">Curate your creation, stem by stem.</p>
+                        </div>
+
+                        {/* PERSONALIZATION (Moved Up) */}
+                        <div className="space-y-6 pb-6 border-b border-gray-100">
+                            <label className="block text-sm font-bold tracking-widest uppercase text-gray-400">
+                                The Details
+                            </label>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-1">
+                                    <span className="text-xs text-gray-400 uppercase font-bold ml-1">To</span>
+                                    <input
+                                        type="text"
+                                        placeholder="Recipient Name"
+                                        value={recipientName}
+                                        onChange={(e) => setRecipientName(e.target.value)}
+                                        className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 font-serif focus:border-black focus:ring-1 focus:ring-black transition-all outline-none shadow-sm placeholder:text-gray-300"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="text-xs text-gray-400 uppercase font-bold ml-1">From</span>
+                                    <input
+                                        type="text"
+                                        placeholder="Sender Name"
+                                        value={senderName}
+                                        onChange={(e) => setSenderName(e.target.value)}
+                                        className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 font-serif focus:border-black focus:ring-1 focus:ring-black transition-all outline-none shadow-sm placeholder:text-gray-300"
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         {/* Instruction Block */}
@@ -107,42 +137,12 @@ export function Customizer({
                                 Type a stem or use Auto-Suggest to be creative with non-traditional items (keep it respectful!).
                             </p>
                             <div className="flex gap-4 text-xs font-bold uppercase tracking-widest text-primary/60">
-                                {/* <button onClick={() => openFieldGuide(0)} className="hover:text-primary hover:underline flex items-center gap-1">
+                                <button onClick={() => openFieldGuide(0)} className="hover:text-primary hover:underline flex items-center gap-1">
                                     <span className="w-1 h-1 rounded-full bg-current"></span> Field Guide
-                                </button> */}
+                                </button>
                                 <button onClick={handleAutoSuggest} className="hover:text-primary hover:underline flex items-center gap-1">
                                     <span className="w-1 h-1 rounded-full bg-current"></span> Auto-Suggest
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* PERSONALIZATION (Moved to Top) */}
-                    <div className="space-y-6 pb-6 border-b border-gray-100">
-                        <label className="block text-sm font-bold tracking-widest uppercase text-gray-400">
-                            The Details
-                        </label>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-1">
-                                <span className="text-xs text-gray-400 uppercase font-bold ml-1">To</span>
-                                <input
-                                    type="text"
-                                    placeholder="Recipient Name"
-                                    value={recipientName}
-                                    onChange={(e) => setRecipientName(e.target.value)}
-                                    className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 font-serif focus:border-black focus:ring-1 focus:ring-black transition-all outline-none shadow-sm placeholder:text-gray-300"
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <span className="text-xs text-gray-400 uppercase font-bold ml-1">From</span>
-                                <input
-                                    type="text"
-                                    placeholder="Sender Name"
-                                    value={senderName}
-                                    onChange={(e) => setSenderName(e.target.value)}
-                                    className="w-full bg-white border border-gray-300 rounded-md px-4 py-3 font-serif focus:border-black focus:ring-1 focus:ring-black transition-all outline-none shadow-sm placeholder:text-gray-300"
-                                />
                             </div>
                         </div>
                     </div>
@@ -184,7 +184,7 @@ export function Customizer({
                                     key={index}
                                     value={flower}
                                     onChange={(val) => handleFlowerChange(index, val)}
-                                    // onOpenFieldGuide={() => openFieldGuide(index)} // Disabled for launch
+                                    onOpenFieldGuide={() => openFieldGuide(index)}
                                     placeholder={`Flower Choice #${index + 1}`}
                                     isActive={activeInputIndex === index}
                                     onFocus={() => setActiveInputIndex(index)}

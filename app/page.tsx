@@ -248,7 +248,7 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
       <button
         onClick={handleCopy}
         disabled={status === "copying"}
-        className="btn-main flex items-center justify-center gap-2"
+        className="btn-main flex items-center justify-center gap-2 min-w-[180px]"
       >
         {status === "copied" ? (
           <motion.span
@@ -258,6 +258,10 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
           >
             Ready to Paste! &#10003;
           </motion.span>
+        ) : status === "copying" ? (
+          <span className="flex items-center gap-2 animate-pulse">
+            Copying...
+          </span>
         ) : (
           <span className="flex items-center gap-2">
             Copy for Email &#128231;
