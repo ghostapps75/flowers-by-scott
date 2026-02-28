@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Dancing_Script, Lora } from "next/font/google";
+import { Bangers, Comic_Neue } from "next/font/google";
 import "./globals.css";
 
-const dancingScript = Dancing_Script({
+const bangers = Bangers({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: "700",
+  weight: ["400"],
   display: "swap",
 });
 
-const lora = Lora({
+const comicNeue = Comic_Neue({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["300", "400", "700"],
   display: "swap",
 });
 
@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dancingScript.variable} ${lora.variable}`}>
-      <body className="antialiased bg-background text-foreground min-h-screen selection:bg-primary/20 selection:text-primary">
+    <html lang="en" className={`${bangers.variable} ${comicNeue.variable}`}>
+      <body className="antialiased bg-background text-foreground min-h-screen selection:bg-black selection:text-white">
         {children}
       </body>
     </html>

@@ -62,38 +62,33 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+      {/* Background Banner Image permeating the scene */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-25">
+        <Image
+          src={bannerImg}
+          alt="Atmospheric Background"
+          fill
+          className="object-cover object-center scale-105"
+          placeholder="blur"
+          priority
+        />
+      </div>
+
       {/* 
         LAYOUT STATE 1: INITIAL 
-        Banner is large and central. 
-        We use layoutId="brand-logo" to connect it to the header version.
       */}
       {!hasGenerated && (
-        <div className="flex-grow flex flex-col items-center justify-center p-4">
+        <div className="flex-grow flex flex-col items-center justify-center p-4 relative z-10">
           <motion.div
             layoutId="brand-container"
-            className="w-full max-w-4xl flex flex-col items-center gap-8"
+            className="w-full max-w-[500px] flex flex-col items-center gap-8"
           >
-            {/* Large Banner */}
-            <motion.div
-              layoutId="brand-logo"
-              className="w-full relative overflow-hidden rounded-xl shadow-md border border-white/20"
-              transition={springTransition}
-            >
-              <Image
-                src={bannerImg}
-                alt="Flowers by Scott"
-                className="w-full h-auto object-contain"
-                priority
-                placeholder="blur"
-              />
-            </motion.div>
-
             {/* Initial Customizer Position */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="w-full max-w-xl bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/40 shadow-sm"
+              className="w-full max-w-xl glass-panel p-6 rounded-xl"
             >
               <Customizer
                 flowers={flowers}
@@ -112,30 +107,14 @@ export default function Home() {
 
       {/* 
         LAYOUT STATE 2: GENERATED 
-        Banner moves to Header. Content is 2-column.
+        Content is 2-column on large screens (well, centered).
       */}
       {hasGenerated && (
         <>
-          {/* Header Area */}
-          <header className="absolute top-0 left-0 p-6 z-50 w-full pointer-events-none">
-            <motion.div
-              layoutId="brand-logo"
-              className="w-[320px] relative overflow-hidden rounded-md shadow-sm border border-white/20 pointer-events-auto"
-              transition={springTransition}
-            >
-              <Image
-                src={bannerImg}
-                alt="Flowers by Scott"
-                className="w-full h-auto object-contain"
-                placeholder="blur"
-              />
-            </motion.div>
-          </header>
+          <main className="w-[92%] max-w-[500px] mx-auto py-24 md:py-32 flex-grow min-h-[60vh] relative z-10">
+            <div className="flex flex-col gap-12 items-center">
 
-          <main className="w-[92%] max-w-[1200px] mx-auto py-24 md:py-32 flex-grow min-h-[60vh]">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-
-              {/* Left: Customizer (Moved) */}
+              {/* Top: Customizer (Moved) */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -153,10 +132,10 @@ export default function Home() {
                 />
               </motion.div>
 
-              {/* Right: Result Area (Staggered Entrance) */}
+              {/* Bottom: Result Area (Staggered Entrance) */}
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.6 }} // Staggered delay
                 className="flex flex-col items-center gap-6"
               >

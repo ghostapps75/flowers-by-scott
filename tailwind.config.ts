@@ -28,7 +28,7 @@ const config: Config = {
                     foreground: "var(--color-foreground)",
                 },
                 card: {
-                    DEFAULT: "rgba(255, 255, 255, 0.6)",
+                    DEFAULT: "#FFFFFF",
                     foreground: "var(--color-foreground)",
                 },
                 popover: {
@@ -36,12 +36,12 @@ const config: Config = {
                     foreground: "var(--color-foreground)",
                 },
                 destructive: {
-                    DEFAULT: "#991B1B", // Keep static for errors
+                    DEFAULT: "var(--color-destructive)",
                     foreground: "#FFFFFF",
                 },
-                border: "rgba(143, 188, 143, 0.3)",
-                input: "rgba(255, 255, 255, 0.8)",
-                ring: "var(--color-primary)",
+                border: "#000000", // Thick black comic lines
+                input: "#FFFFFF",
+                ring: "var(--color-accent)",
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -49,10 +49,10 @@ const config: Config = {
                 sm: "calc(var(--radius) - 4px)",
             },
             fontFamily: {
-                sans: ["var(--font-body)", "sans-serif"],
-                serif: ["var(--font-body)", "serif"],
-                display: ["var(--font-display)", "cursive"],
-                body: ["var(--font-body)", "serif"],
+                sans: ["var(--font-body)", "Comic Sans MS", "sans-serif"],
+                serif: ["var(--font-body)", "Comic Sans MS", "serif"],
+                display: ["var(--font-display)", "Impact", "serif"],
+                body: ["var(--font-body)", "Comic Sans MS", "sans-serif"],
             },
         },
     },

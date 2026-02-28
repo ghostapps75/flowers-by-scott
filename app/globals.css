@@ -1,119 +1,142 @@
 @import "tailwindcss";
 
 :root {
-  /* Premium Glossy Magazine Theme - Static */
-  --color-background: #FFFFFF;
-  /* Pure White */
-  --color-foreground: #1A1A1A;
-  /* Charcoal */
-  --color-primary: #111111;
-  /* Deep Black */
-  --color-secondary: #F5F5F7;
-  /* Light Gray */
+  /* Elegant Navy Theme */
+  --color-background: #0c182a;
+  /* Deep Navy Blue */
+  --color-foreground: #F8F9FA;
+  /* Soft White */
+  --color-primary: #D4AF37;
+  /* Gold */
+  --color-secondary: #0A0F0D;
+  /* Space black */
   --color-accent: #D4AF37;
   /* Gold */
-  --color-muted: #E5E5E5;
-  --color-input: #FFFFFF;
+  --color-muted: #64748B;
+  --color-input: rgba(255, 255, 255, 0.05);
   --color-destructive: #9B1C1C;
 
   --font-display: var(--font-display);
-  --font-serif: var(--font-serif);
+  --font-serif: var(--font-body);
 }
 
 /* Smooth Base Transitions */
 *,
 *::before,
 *::after {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 /* Base body styles */
 body {
-  font-family: var(--font-serif), "Times New Roman", serif;
+  font-family: var(--font-body), "Comic Sans MS", sans-serif;
   line-height: 1.6;
-  color: var(--color-foreground);
-  background: var(--color-background);
+  color: #000000;
+
+  /* Stylish Navy Blue Background */
+  background-color: var(--color-background);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  position: relative;
 }
 
 h1,
 h2,
 h3 {
-  color: #2e5d34;
-  font-weight: 700;
+  color: var(--color-foreground);
+  font-family: var(--font-display), serif;
+  font-weight: 500;
 }
 
-/* Hero Banner - Pre-Launch Polish */
-.hero-section {
-  width: 100%;
-  height: 210px;
-  /* Reduced to 25% smaller */
-  display: flex;
-  /* Center the content */
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f7;
-  /* Keep matte background */
-  border-bottom: 1px solid var(--color-muted);
-  overflow: hidden;
+/* Pop Art Comic Panels Utilities */
+.comic-panel,
+.comic-card,
+.comic-input {
+  background: #FFFFFF;
+  border: 4px solid #000000;
+  /* Thick ink outline */
+  position: relative;
+  /* Hard offset un-blurred shadow */
+  box-shadow: 8px 8px 0px 0px #000000;
+  transition: all 0.2s ease-in-out;
 }
 
-.banner-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  opacity: 0.9;
+.comic-input {
+  color: #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  font-weight: bold;
 }
 
-/* Main Button */
+.comic-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: normal;
+}
+
+.comic-input:focus {
+  outline: none;
+  background: #FDFBF7;
+  /* Off-white instead of bright yellow */
+  box-shadow: 6px 6px 0px 0px #000000;
+  transform: translate(-2px, -2px);
+}
+
+/* Main Button - Elegant Brutalist Button */
 .btn-main {
   display: inline-block;
-  background-color: #2e5d34;
-  color: #fff;
-  font-family: var(--font-body), "Lora", serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  padding: 15px 40px;
-  border: none;
-  border-radius: 50px;
+  background: var(--color-primary);
+  /* Pop Gold */
+  color: #000000;
+  /* Contrast black font */
+  font-family: var(--font-display), "Bangers", impact, sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  padding: 12px 40px;
+  border: 4px solid #000000;
+  border-radius: 0px;
+  /* Sharp edges */
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s;
-  box-shadow: 0 4px 6px rgba(46, 93, 52, 0.2);
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px #FFFFFF;
+
+  /* Hard Brutalist Shadow */
+  box-shadow: 6px 6px 0px 0px #000000;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-main:hover {
-  background-color: #d2691e;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(210, 105, 30, 0.3);
+.btn-main:hover:not(:disabled) {
+  background: #FDFBF7;
+  /* Soft white pop */
+  color: #000000;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+.btn-main:active:not(:disabled) {
+  transform: translate(6px, 6px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+
+.btn-main:disabled {
+  background: #CCCCCC;
+  color: #666666;
+  text-shadow: none;
+  border-color: #666666;
+  box-shadow: 4px 4px 0px 0px #666666;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Site Footer */
 .site-footer {
   text-align: center;
-  color: #2e5d34;
-  border-top: 1px solid #8fbc8f;
+  color: rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 60px;
   padding: 40px 20px;
   font-size: 0.9rem;
-}
-
-/* Glassmorphism Utilities */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.4);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(143, 188, 143, 0.3);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(143, 188, 143, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(46, 93, 52, 0.1);
+  position: relative;
+  z-index: 10;
 }
 
 /* Animations */
@@ -128,7 +151,7 @@ h3 {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(46, 93, 52, 0) 0%, rgba(46, 93, 52, 0.2) 50%, rgba(46, 93, 52, 0) 100%);
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.2) 50%, rgba(212, 175, 55, 0) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -141,24 +164,13 @@ h3 {
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero-section {
-    width: 75%;
-  }
-
-  .bouquet-creator-interface {
-    padding: 30px 20px;
-  }
-}
-
-/* Custom Scrollbar for Field Guide */
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -166,12 +178,10 @@ h3 {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  border: 3px solid transparent;
-  background-clip: content-box;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(255, 255, 255, 0.3);
 }
