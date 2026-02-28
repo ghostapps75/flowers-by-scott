@@ -196,13 +196,20 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
     setStatus("copying");
 
     try {
-      const response = await fetch(imageSrc);
-      const blob = await response.blob();
+      const textContent = `You have received a bouquet! Create your own digital flower arrangement at: https://flowersbyscott.netlify.app`;
 
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = async () => {
-        const base64data = reader.result as string;
+      // Safari requires ClipboardItem to be created synchronously within the
+      // user gesture (click). Passing Promises for blob values keeps the
+      // gesture alive while async work (fetch + base64 conversion) completes.
+      const htmlBlobPromise = (async () => {
+        const response = await fetch(imageSrc);
+        const blob = await response.blob();
+        const base64data = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
 
         const htmlContent = `
           <div style="font-family: 'Lora', 'Times New Roman', serif; color: #2c3e50; max-width: 600px; text-align: center;">
@@ -224,18 +231,18 @@ function CopyButton({ imageSrc }: { imageSrc: string }) {
           </div>
         `;
 
-        const textContent = `You have received a bouquet! Create your own digital flower arrangement at: https://flowersbyscott.netlify.app`;
+        return new Blob([htmlContent], { type: "text/html" });
+      })();
 
-        const clipboardItem = new ClipboardItem({
-          "text/html": new Blob([htmlContent], { type: "text/html" }),
-          "text/plain": new Blob([textContent], { type: "text/plain" }),
-        });
+      const clipboardItem = new ClipboardItem({
+        "text/html": htmlBlobPromise,
+        "text/plain": new Blob([textContent], { type: "text/plain" }),
+      });
 
-        await navigator.clipboard.write([clipboardItem]);
+      await navigator.clipboard.write([clipboardItem]);
 
-        setStatus("copied");
-        setTimeout(() => setStatus("idle"), 3000);
-      };
+      setStatus("copied");
+      setTimeout(() => setStatus("idle"), 3000);
     } catch (err) {
       console.error("Failed to copy:", err);
       setStatus("idle");
