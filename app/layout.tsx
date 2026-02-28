@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bangers.variable} ${comicNeue.variable}`}>
-      <body className="antialiased bg-background text-foreground min-h-screen selection:bg-black selection:text-white">
+    <html lang="en" suppressHydrationWarning className={`${bangers.variable} ${comicNeue.variable}`}>
+      <body suppressHydrationWarning className="antialiased bg-background text-foreground min-h-screen selection:bg-black selection:text-white">
         {children}
       </body>
     </html>

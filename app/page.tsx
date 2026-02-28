@@ -31,7 +31,7 @@ export default function Home() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    setHasGenerated(true); // Switch layout immediately
+    setIsGenerating(true);
 
     try {
       const response = await fetch("/api/generate", {
@@ -46,8 +46,10 @@ export default function Home() {
 
       if (data.image) {
         setImageSrc(data.image);
+        setHasGenerated(true); // Switch layout only after generation succeeds
       } else if (data.imageData) {
         setImageSrc(data.imageData);
+        setHasGenerated(true); // Switch layout only after generation succeeds
       } else {
         console.error("API Error:", data);
         alert("Failed to generate image. Please try again.");
@@ -111,14 +113,15 @@ export default function Home() {
       */}
       {hasGenerated && (
         <>
-          <main className="w-[92%] max-w-[500px] mx-auto py-24 md:py-32 flex-grow min-h-[60vh] relative z-10">
-            <div className="flex flex-col gap-12 items-center">
+          <main className="w-[92%] max-w-[500px] mx-auto flex-grow h-full relative z-10 flex items-center justify-center">
+            <div className="flex flex-col items-center w-full">
 
-              {/* Top: Customizer (Moved) */}
+              {/* Customizer (Maintains position but might fade/blur) */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
+                initial={{ opacity: 1 }}
+                animate={{ opacity: hasGenerated ? 0.3 : 1, filter: hasGenerated ? "blur(4px)" : "none" }}
+                transition={{ duration: 0.5 }}
+                className="mt-12"
               >
                 <Customizer
                   flowers={flowers}
@@ -132,27 +135,38 @@ export default function Home() {
                 />
               </motion.div>
 
-              {/* Bottom: Result Area (Staggered Entrance) */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.6 }} // Staggered delay
-                className="flex flex-col items-center gap-6"
-              >
-                <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
-
-                <AnimatePresence>
-                  {imageSrc && !isGenerating && (
+              {/* Top/Center: Result Area Overlayed */}
+              <AnimatePresence>
+                {hasGenerated && imageSrc && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                    transition={{ type: "spring", bounce: 0.4, duration: 0.8 }}
+                    className="absolute inset-0 z-50 flex flex-col items-center justify-center p-4"
+                  >
+                    {/* Dark Modal Backdrop */}
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                    >
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.8 }}
+                      className="absolute inset-0 bg-background/90 backdrop-blur-sm -z-10"
+                      onClick={() => setHasGenerated(false)} // Click outside to close
+                    />
+
+                    <div className="flex flex-col items-center gap-6 w-full max-w-xl">
+                      <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
                       <CopyButton imageSrc={imageSrc} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                      <button
+                        onClick={() => setHasGenerated(false)}
+                        className="text-foreground/70 hover:text-primary transition-colors mt-4"
+                      >
+                        ← Back to Customizer
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
             </div>
           </main>
         </>
