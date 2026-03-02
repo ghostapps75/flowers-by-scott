@@ -26,7 +26,7 @@ export function FieldGuidePage({ sheet, onSelect }: FieldGuidePageProps) {
         <section className="w-full max-w-[1600px] mx-auto py-12 md:py-20 border-b border-white/10 last:border-0 relative">
             {/* Section Header */}
             <div className="mb-8 md:mb-16 text-center">
-                <h3 className="font-display text-3xl md:text-4xl text-white tracking-widest uppercase mb-2 font-normal">{sheet.title}</h3>
+                <h3 className="font-display text-3xl md:text-4xl text-white tracking-widest uppercase mb-2 font-normal" style={{ color: '#ffffff' }}>{sheet.title}</h3>
                 <p className="text-white/50 text-xs uppercase tracking-[0.3em] font-serif">
                     {sheet.id.toUpperCase()}
                 </p>
