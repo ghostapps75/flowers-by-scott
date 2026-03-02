@@ -11,7 +11,7 @@ interface FieldGuideModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSelect: (flower: string, targetIdx?: number) => void;
-    availableFlowers: string[];
+    availableFlowers?: string[];
     activeTargetIndex?: number;
 }
 

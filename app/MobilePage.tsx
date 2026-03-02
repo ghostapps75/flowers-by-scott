@@ -1,23 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Customizer } from "@/components/Customizer";
 import { FloatingVase } from "@/components/FloatingVase";
-import { MobileStemInput } from "@/components/MobileStemInput";
-import { CopyButton as HtmlCopier } from "@/components/CopyButton";
 import { ActionBar } from "@/components/ActionBar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home as HomeIcon, Search, User, Sprout } from "lucide-react";
 import Image from "next/image";
 const bannerImg = "/images/banner.jpg";
-import { getHarmoniousTriplet } from "@/lib/constants";
-
-// Spring transition for the "bouncy" feel
-const springTransition = {
-  type: "spring",
-  stiffness: 120,
-  damping: 20,
-} as const;
 
 export function MobileView() {
   const [flowers, setFlowers] = useState<string[]>(["", "", ""]);
