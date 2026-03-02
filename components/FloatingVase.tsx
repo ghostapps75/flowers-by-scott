@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Download } from "lucide-react";
 
 export interface FloatingVaseProps {
     imageSrc?: string;
@@ -10,21 +11,43 @@ export interface FloatingVaseProps {
 }
 
 export function FloatingVase({ imageSrc, className, isLoading }: FloatingVaseProps) {
+    const handleDownload = async () => {
+        if (!imageSrc) return;
+        try {
+            const response = await fetch(imageSrc);
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = objectUrl;
+            link.download = `bouquet-by-scott-${Date.now()}.png`; // Provide a nice default name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Cleanup memory
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
+        } catch (err) {
+            console.error("Failed to download image:", err);
+            alert("Could not download the image. Please try again.");
+        }
+    };
+
     return (
-        <div className={cn("relative z-10 w-full max-w-md mx-auto", className)}>
-            <div className="relative">
-                {/* Main Container */}
-                <div className="glass-card w-full aspect-[3/4] rounded-2xl overflow-hidden relative shadow-lg">
+        <div className={cn("relative z-10 w-full max-w-md mx-auto md:max-w-none md:w-auto md:h-[80vh]", className)}>
+            <div className="relative h-full">
+                {/* Main Container - Thin Comic Style Frame */}
+                <div className="bg-[#FDFBF7] border-2 border-black p-2 md:p-3 shadow-[6px_6px_0_0_rgba(0,0,0,1)] w-full h-full aspect-[3/4] md:aspect-square relative flex flex-col">
 
                     {/* 1. Loading State (Highest Priority) */}
                     {isLoading ? (
-                        <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center transition-all duration-500">
-                            <div className="w-24 h-24 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
-                            <p className="text-primary font-serif text-xl animate-pulse">Styling your arrangement...</p>
+                        <div className="flex-1 bg-gray-100 border-2 border-black border-dashed flex flex-col items-center justify-center p-6 text-center">
+                            <div className="w-12 h-12 border-2 border-black border-t-[#D4A373] rounded-full animate-spin mb-4" />
+                            <p className="font-comic text-lg font-bold uppercase tracking-wider text-black animate-pulse">Painting your masterpiece...</p>
                         </div>
                     ) : imageSrc ? (
                         /* 2. Final Image State */
-                        <div className="relative w-full h-full bg-black/5">
+                        <div className="relative flex-1 border-2 border-black bg-black/5 overflow-hidden group">
                             <Image
                                 src={imageSrc}
                                 alt="Custom Floral Arrangement"
@@ -32,15 +55,25 @@ export function FloatingVase({ imageSrc, className, isLoading }: FloatingVasePro
                                 className="object-cover"
                                 unoptimized
                             />
+                            {/* Overlay Download Button */}
+                            <button
+                                onClick={handleDownload}
+                                className="absolute top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-sm border-2 border-black rounded-full flex items-center justify-center text-black hover:bg-[#fde047] hover:scale-110 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] z-20"
+                                aria-label="Save Image"
+                                title="Save Image to Device"
+                            >
+                                <Download size={20} className="md:w-6 md:h-6" />
+                            </button>
                         </div>
                     ) : (
-                        /* 3. Empty State / Placeholder (Optional - or just render nothing) */
-                        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm flex flex-col items-center justify-center gap-6 p-6 text-center">
-                            <svg className="w-24 h-24 text-primary opacity-60 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M7 3h10a1 1 0 0 1 1 1v1a4 4 0 0 1-2.9 3.84L14 10v4l2.4 3.2A2 2 0 0 1 15.6 21H8.4a2 2 0 0 1-1.6-3.2L9.2 14v-4L8.09 8.84A4 4 0 0 1 5 5V4a1 1 0 0 1 1-1z" />
-                                <path d="M9.5 10A2.5 2.5 0 0 0 12 12.5A2.5 2.5 0 0 0 14.5 10" />
+                        /* 3. Empty State / Placeholder */
+                        <div className="flex-1 bg-gray-50 border-2 border-black border-dashed flex flex-col items-center justify-center gap-4 p-6 text-center">
+                            <svg className="w-16 h-16 text-black/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
                             </svg>
-                            <p className="text-foreground/70 font-display text-2xl italic tracking-wide drop-shadow-md">Your arrangement begins here</p>
+                            <p className="font-comic text-lg font-bold uppercase text-black/40">Ready for art</p>
                         </div>
                     )}
                 </div>

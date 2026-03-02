@@ -1,23 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  /* Elegant Navy Theme */
-  --color-background: #0c182a;
-  /* Deep Navy Blue */
+  /* Common */
+  --font-display: var(--font-display);
+  --font-serif: var(--font-body);
+}
+
+.mobile-theme {
+  --color-background: #112318;
   --color-foreground: #F8F9FA;
-  /* Soft White */
   --color-primary: #D4AF37;
-  /* Gold */
   --color-secondary: #0A0F0D;
-  /* Space black */
   --color-accent: #D4AF37;
-  /* Gold */
   --color-muted: #64748B;
   --color-input: rgba(255, 255, 255, 0.05);
   --color-destructive: #9B1C1C;
+}
 
-  --font-display: var(--font-display);
-  --font-serif: var(--font-body);
+.desktop-theme {
+  --color-background: #0c182a;
+  --color-foreground: #F8F9FA;
+  --color-primary: #D4AF37;
+  --color-secondary: #0A0F0D;
+  --color-accent: #D4AF37;
+  --color-muted: #64748B;
+  --color-input: rgba(255, 255, 255, 0.05);
+  --color-destructive: #9B1C1C;
 }
 
 /* Smooth Base Transitions */
@@ -27,17 +35,22 @@
   transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* Base body styles */
 body {
-  font-family: var(--font-body), "Comic Sans MS", sans-serif;
+  font-family: var(--font-body), sans-serif;
   line-height: 1.6;
-  color: #000000;
-
-  /* Stylish Navy Blue Background */
-  background-color: var(--color-background);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   position: relative;
+}
+
+.mobile-theme {
+  color: #F8F9FA;
+  background-color: var(--color-background);
+}
+
+.desktop-theme {
+  color: #000000;
+  background-color: var(--color-background);
 }
 
 h1,
@@ -48,81 +61,72 @@ h3 {
   font-weight: 500;
 }
 
-/* Pop Art Comic Panels Utilities */
-.comic-panel,
-.comic-card,
-.comic-input {
-  background: #FFFFFF;
-  border: 4px solid #000000;
-  /* Thick ink outline */
-  position: relative;
-  /* Hard offset un-blurred shadow */
-  box-shadow: 8px 8px 0px 0px #000000;
-  transition: all 0.2s ease-in-out;
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
-.comic-input {
-  color: #000000;
-  box-shadow: 4px 4px 0px 0px #000000;
-  font-weight: bold;
+.glass-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transition: all 0.3s ease;
 }
 
-.comic-input::placeholder {
-  color: rgba(0, 0, 0, 0.4);
-  font-weight: normal;
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
-.comic-input:focus {
+.glass-input:focus {
   outline: none;
-  background: #FDFBF7;
-  /* Off-white instead of bright yellow */
-  box-shadow: 6px 6px 0px 0px #000000;
-  transform: translate(-2px, -2px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(212, 175, 55, 0.5);
+  /* Gold outline on focus */
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
 }
 
-/* Main Button - Elegant Brutalist Button */
+/* Elegant Button */
 .btn-main {
   display: inline-block;
-  background: var(--color-primary);
-  /* Pop Gold */
-  color: #000000;
-  /* Contrast black font */
-  font-family: var(--font-display), "Bangers", impact, sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 0.05em;
-  padding: 12px 40px;
-  border: 4px solid #000000;
-  border-radius: 0px;
-  /* Sharp edges */
+  background: linear-gradient(135deg, #E6C25B, #B89025);
+  /* Gold Gradient */
+  color: #112318;
+  /* Dark green for text */
+  font-family: var(--font-body), sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
-  text-transform: uppercase;
-  text-shadow: 2px 2px 0px #FFFFFF;
 
-  /* Hard Brutalist Shadow */
-  box-shadow: 6px 6px 0px 0px #000000;
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-main:hover:not(:disabled) {
-  background: #FDFBF7;
-  /* Soft white pop */
-  color: #000000;
-  transform: translate(-2px, -2px);
-  box-shadow: 8px 8px 0px 0px #000000;
+  background: linear-gradient(135deg, #F0DB85, #C7A234);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .btn-main:active:not(:disabled) {
-  transform: translate(6px, 6px);
-  box-shadow: 0px 0px 0px 0px #000000;
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .btn-main:disabled {
-  background: #CCCCCC;
-  color: #666666;
-  text-shadow: none;
-  border-color: #666666;
-  box-shadow: 4px 4px 0px 0px #666666;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none;
   cursor: not-allowed;
   transform: none;
 }
@@ -184,4 +188,76 @@ h3 {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ----------------------------------- */
+/* OG Desktop Comic Theme Utilities    */
+/* ----------------------------------- */
+.comic-panel,
+.comic-card,
+.comic-input {
+  background: #FFFFFF;
+  border: 4px solid #000000;
+  position: relative;
+  box-shadow: 8px 8px 0px 0px #000000;
+  transition: all 0.2s ease-in-out;
+}
+
+.comic-input {
+  color: #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  font-weight: bold;
+}
+
+.comic-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: normal;
+}
+
+.comic-input:focus {
+  outline: none;
+  background: #FDFBF7;
+  box-shadow: 6px 6px 0px 0px #000000;
+  transform: translate(-2px, -2px);
+}
+
+/* Main Button - Elegant Brutalist Button */
+.btn-desktop {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #000000;
+  font-family: var(--font-display), "Bangers", impact, sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  padding: 12px 40px;
+  border: 4px solid #000000;
+  border-radius: 0px;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px #FFFFFF;
+  box-shadow: 6px 6px 0px 0px #000000;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-desktop:hover:not(:disabled) {
+  background: #FDFBF7;
+  color: #000000;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+.btn-desktop:active:not(:disabled) {
+  transform: translate(6px, 6px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+
+.btn-desktop:disabled {
+  background: #CCCCCC;
+  color: #666666;
+  text-shadow: none;
+  border-color: #666666;
+  box-shadow: 4px 4px 0px 0px #666666;
+  cursor: not-allowed;
+  transform: none;
 }

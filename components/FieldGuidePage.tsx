@@ -23,11 +23,11 @@ export function FieldGuidePage({ sheet, onSelect }: FieldGuidePageProps) {
     };
 
     return (
-        <section className="w-full max-w-[1600px] mx-auto py-12 md:py-20 border-b border-stone-100 last:border-0 relative">
+        <section className="w-full max-w-[1600px] mx-auto py-12 md:py-20 border-b border-white/10 last:border-0 relative">
             {/* Section Header */}
             <div className="mb-8 md:mb-16 text-center">
-                <h3 className="font-display text-3xl md:text-4xl text-emerald-950 mb-2">{sheet.title}</h3>
-                <p className="text-emerald-900/40 text-xs uppercase tracking-[0.2em] font-mono">
+                <h3 className="font-display text-3xl md:text-4xl text-primary tracking-widest uppercase mb-2 font-normal">{sheet.title}</h3>
+                <p className="text-primary/50 text-xs uppercase tracking-[0.3em] font-serif">
                     {sheet.id.toUpperCase()}
                 </p>
             </div>
@@ -50,7 +50,7 @@ export function FieldGuidePage({ sheet, onSelect }: FieldGuidePageProps) {
                             transition={{ delay: index * 0.05 }}
                             whileHover={{ y: -5 }}
                         >
-                            <div className="relative w-full aspect-square bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden group-hover:shadow-2xl group-hover:border-emerald-500/30 transition-all duration-300">
+                            <div className="relative w-full aspect-square bg-[#FDFBF7]/95 rounded-md shadow-lg border border-white/10 overflow-hidden group-hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] group-hover:border-primary/50 transition-all duration-300">
                                 <Image
                                     src={imagePath}
                                     alt={stem}
@@ -60,7 +60,7 @@ export function FieldGuidePage({ sheet, onSelect }: FieldGuidePageProps) {
                                 />
                             </div>
 
-                            <span className="mt-4 font-serif text-base md:text-xl font-medium text-emerald-950 group-hover:text-emerald-700 transition-colors">
+                            <span className="mt-4 font-serif text-base md:text-lg font-medium text-white/80 group-hover:text-primary transition-colors tracking-wide">
                                 {stem}
                             </span>
                         </motion.button>
