@@ -137,14 +137,19 @@ export function DesktopView() {
               <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
               <div className="flex flex-col items-center gap-2 mt-4">
                 <ActionBar imageSrc={imageSrc} />
-                <button
-                  onClick={() => setHasGenerated(false)}
-                  className="bg-white border-2 border-black text-black px-4 py-2 font-bold font-body hover:bg-gray-100 transition-colors shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-0.5 hover:translate-x-0.5 hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)]"
-                >
-                  ← Create Another
-                </button>
               </div>
             </div>
+
+            {/* Top Right Close Button */}
+            <button
+              onClick={() => setHasGenerated(false)}
+              className="fixed top-6 right-6 md:top-8 md:right-8 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 backdrop-blur-md transition-colors z-[110]"
+              aria-label="Close Image"
+            >
+              <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

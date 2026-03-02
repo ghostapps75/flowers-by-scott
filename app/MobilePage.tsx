@@ -156,12 +156,6 @@ export function MobileView() {
 
                       <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />
                       <ActionBar imageSrc={imageSrc} />
-                      <button
-                        onClick={() => setHasGenerated(false)}
-                        className="text-foreground/70 hover:text-primary transition-colors mt-4"
-                      >
-                        ← Back to Customizer
-                      </button>
                     </div>
                   </motion.div>
                 )}

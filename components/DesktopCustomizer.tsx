@@ -87,7 +87,7 @@ export function DesktopCustomizer({
                 isOpen={isFieldGuideOpen}
                 onClose={() => setIsFieldGuideOpen(false)}
                 onSelect={handleFieldGuideSelect}
-                availableFlowers={[]} // Pass empty or actual list if needed
+
             />
 
             <div className="flex flex-col gap-2">
