@@ -16,6 +16,12 @@ interface CustomizerProps {
     setRecipientName: Dispatch<SetStateAction<string>>;
     senderName: string;
     setSenderName: Dispatch<SetStateAction<string>>;
+    cardMessage: string;
+    setCardMessage: Dispatch<SetStateAction<string>>;
+    includeBalloons: boolean;
+    setIncludeBalloons: Dispatch<SetStateAction<boolean>>;
+    balloonColor: string;
+    setBalloonColor: Dispatch<SetStateAction<string>>;
     onGenerate: () => void;
     isGenerating: boolean;
 }
@@ -27,6 +33,12 @@ export function Customizer({
     setRecipientName,
     senderName,
     setSenderName,
+    cardMessage,
+    setCardMessage,
+    includeBalloons,
+    setIncludeBalloons,
+    balloonColor,
+    setBalloonColor,
     onGenerate,
     isGenerating,
 }: CustomizerProps) {
@@ -132,6 +144,58 @@ export function Customizer({
                                     className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37] rounded-xl px-4 py-3 font-serif text-black font-bold transition-all outline-none placeholder:text-black/40 focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.4)]"
                                 />
                             </div>
+                            <div className="space-y-1 md:col-span-2 mt-2">
+                                <span className="text-[16px] font-serif font-bold text-white tracking-[0.15em] ml-1 mb-2 block uppercase drop-shadow-md">Card Message</span>
+                                <textarea
+                                    placeholder="Write a custom message for the card..."
+                                    value={cardMessage}
+                                    onChange={(e) => setCardMessage(e.target.value)}
+                                    rows={2}
+                                    className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37] rounded-xl px-4 py-3 font-serif text-black font-bold transition-all outline-none placeholder:text-black/40 focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.4)] resize-none"
+                                />
+                            </div>
+
+                            {/* Balloons Feature */}
+                            <div className="md:col-span-2 mt-2 p-4 bg-white/5 border-2 border-[#D4AF37]/30 rounded-xl space-y-4">
+                                <label className="flex items-center gap-3 cursor-pointer group">
+                                    <div className="relative">
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only"
+                                            checked={includeBalloons}
+                                            onChange={(e) => setIncludeBalloons(e.target.checked)}
+                                        />
+                                        <div className={`w-6 h-6 border-2 rounded transition-colors ${includeBalloons ? 'bg-[#D4AF37] border-[#D4AF37]' : 'border-white/50 group-hover:border-[#D4AF37]'}`}>
+                                            {includeBalloons && <svg className="w-5 h-5 text-[#112318] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                                        </div>
+                                    </div>
+                                    <span className="text-[16px] font-serif font-bold text-white tracking-[0.1em] uppercase drop-shadow-md">Add Floating Balloons</span>
+                                </label>
+
+                                <AnimatePresence>
+                                    {includeBalloons && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: "auto", opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className="overflow-hidden space-y-1"
+                                        >
+                                            <span className="text-[14px] font-serif font-bold text-white/80 tracking-[0.1em] ml-1 mb-1 block uppercase">Balloon Theme</span>
+                                            <select
+                                                value={balloonColor}
+                                                onChange={(e) => setBalloonColor(e.target.value)}
+                                                title="Select Balloon Color Theme"
+                                                className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37]/50 rounded-lg px-4 py-2.5 font-serif text-black font-bold outline-none cursor-pointer appearance-none"
+                                            >
+                                                <option value="Gold & White">Classic Gold & White</option>
+                                                <option value="Silver & White">Elegant Silver & White</option>
+                                                <option value="Rose Gold">Modern Rose Gold</option>
+                                            </select>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
                         </div>
                         {/* PERSONALIZATION (Added Back) */}
                         <div className="space-y-6">

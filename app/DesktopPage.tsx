@@ -20,6 +20,9 @@ export function DesktopView() {
   const [flowers, setFlowers] = useState<string[]>(["", "", ""]);
   const [recipientName, setRecipientName] = useState("");
   const [senderName, setSenderName] = useState("");
+  const [cardMessage, setCardMessage] = useState("");
+  const [includeBalloons, setIncludeBalloons] = useState(false);
+  const [balloonColor, setBalloonColor] = useState("Gold & White");
   const [isGenerating, setIsGenerating] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   // Track if we have ever generated to switch layout permanently for this session
@@ -40,7 +43,14 @@ export function DesktopView() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ flowers, recipientName, senderName }),
+        body: JSON.stringify({
+          flowers,
+          recipientName,
+          senderName,
+          cardMessage,
+          includeBalloons,
+          balloonColor
+        }),
       });
 
       const data = await response.json();
@@ -111,6 +121,12 @@ export function DesktopView() {
               setRecipientName={setRecipientName}
               senderName={senderName}
               setSenderName={setSenderName}
+              cardMessage={cardMessage}
+              setCardMessage={setCardMessage}
+              includeBalloons={includeBalloons}
+              setIncludeBalloons={setIncludeBalloons}
+              balloonColor={balloonColor}
+              setBalloonColor={setBalloonColor}
               onGenerate={handleGenerate}
               isGenerating={isGenerating}
             />
