@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Check } from "lucide-react";
 
@@ -10,25 +10,41 @@ interface ActionBarProps {
 
 export function ActionBar({ imageSrc }: ActionBarProps) {
     const [copyStatus, setCopyStatus] = useState<"idle" | "copying" | "copied">("idle");
+    const [precomputedBlobs, setPrecomputedBlobs] = useState<{ pngBlob: Blob; htmlData: string } | null>(null);
 
     const siteUrl = "https://flowersbyscott.netlify.app";
 
-    // Handles copying the full rendered HTML email payload
-    const handleCopyHtml = async () => {
-        if (!imageSrc || !window.isSecureContext) return;
-        setCopyStatus("copying");
+    useEffect(() => {
+        if (!imageSrc) return;
 
-        try {
-            const textContent = `You have received a bouquet! Create your own digital flower arrangement at: ${siteUrl}`;
+        let isMounted = true;
 
-            const htmlBlobPromise = (async () => {
-                const response = await fetch(imageSrc);
-                const blob = await response.blob();
+        const generateBlobs = async () => {
+            try {
+                const pngBlob = await new Promise<Blob>((resolve, reject) => {
+                    const img = new window.Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        const canvas = document.createElement("canvas");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext("2d");
+                        if (!ctx) return reject(new Error("No 2d context"));
+                        ctx.drawImage(img, 0, 0);
+                        canvas.toBlob((blob) => {
+                            if (blob) resolve(blob);
+                            else reject(new Error("Canvas to Blob failed"));
+                        }, "image/png");
+                    };
+                    img.onerror = () => reject(new Error("Image load failed"));
+                    img.src = imageSrc;
+                });
+
                 const base64data = await new Promise<string>((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onloadend = () => resolve(reader.result as string);
                     reader.onerror = reject;
-                    reader.readAsDataURL(blob);
+                    reader.readAsDataURL(pngBlob);
                 });
 
                 const htmlContent = `
@@ -60,12 +76,67 @@ export function ActionBar({ imageSrc }: ActionBarProps) {
           </table>
         `;
 
-                return new Blob([htmlContent], { type: "text/html" });
-            })();
+                if (isMounted) {
+                    setPrecomputedBlobs({ pngBlob, htmlData: htmlContent });
+                }
+            } catch (err) {
+                console.error("Failed to precompute blobs:", err);
+            }
+        };
+
+        generateBlobs();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [imageSrc]);
+
+    // Handles copying the full rendered HTML email payload and the raw image
+    const handleCopyHtml = async () => {
+        if (!imageSrc) return;
+        
+        if (!window.isSecureContext) {
+            alert("Copy & Share requires a secure connection (HTTPS) or localhost. Please deploy or use a secure tunnel (like localtunnel or ngrok) to test this feature on a mobile device.");
+            return;
+        }
+
+        if (!precomputedBlobs) {
+            setCopyStatus("copying");
+            // Wait a moment in case it just hasn't finished
+            alert("Still preparing the image for share, please try again in a second!");
+            setCopyStatus("idle");
+            return;
+        }
+
+        setCopyStatus("copying");
+
+        try {
+            const textContent = `You have received a bouquet! Create your own digital flower arrangement at: ${siteUrl}`;
+            const { pngBlob, htmlData } = precomputedBlobs;
+            
+            const file = new File([pngBlob], "bouquet.png", { type: "image/png" });
+
+            // Try native share first (works great on iOS/Android for WhatsApp)
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: "Flowers by Scott",
+                        text: textContent,
+                        files: [file]
+                    });
+                    setCopyStatus("copied");
+                    setTimeout(() => setCopyStatus("idle"), 3000);
+                    return; // exit early if native share works
+                } catch (shareErr) {
+                    console.log("Native share cancelled or failed, falling back to clipboard", shareErr);
+                    // Fall through to clipboard
+                }
+            }
 
             const clipboardItem = new ClipboardItem({
-                "text/html": htmlBlobPromise,
-                "text/plain": new Blob([textContent], { type: "text/plain" }),
+                "text/html": new Promise((resolve) => resolve(new Blob([htmlData], { type: "text/html" }))),
+                "text/plain": new Promise((resolve) => resolve(new Blob([textContent], { type: "text/plain" }))),
+                "image/png": new Promise((resolve) => resolve(pngBlob)),
             });
 
             await navigator.clipboard.write([clipboardItem]);

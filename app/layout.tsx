@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     siteName: "Flowers by Scott",
     images: [
       {
-        url: "https://flowersbyscott.netlify.app/og-image.jpg", // We'll assume this URL for now, or just provide a placeholder. We can use the banner image if needed, but a standard OG image is best. Let's use an absolute path if we have one. I'll just use the vercel/netlify standard.
-        width: 1200,
-        height: 630,
-        alt: "Flowers by Scott - Custom Floral Art",
+          url: "https://flowersbyscott.netlify.app/og-image-small.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Flowers by Scott - Custom Floral Art",
       },
     ],
     locale: "en_US",
