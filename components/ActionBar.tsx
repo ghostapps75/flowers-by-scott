@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Download, Share2 } from "lucide-react";
 
 interface ActionBarProps {
     imageSrc: string;
@@ -91,19 +91,39 @@ export function ActionBar({ imageSrc }: ActionBarProps) {
         };
     }, [imageSrc]);
 
-    // Handles copying the full rendered HTML email payload and the raw image
+    const handleDownload = () => {
+        if (!precomputedBlobs && imageSrc) {
+           const link = document.createElement("a");
+           link.href = imageSrc;
+           link.download = "bouquet.png";
+           document.body.appendChild(link);
+           link.click();
+           document.body.removeChild(link);
+           return;
+        }
+        if (!precomputedBlobs) return;
+
+        const url = URL.createObjectURL(precomputedBlobs.pngBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "bouquet.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     const handleCopyHtml = async () => {
         if (!imageSrc) return;
         
         if (!window.isSecureContext) {
-            alert("Copy & Share requires a secure connection (HTTPS) or localhost. Please deploy or use a secure tunnel (like localtunnel or ngrok) to test this feature on a mobile device.");
+            alert("Copy requires a secure connection (HTTPS) or localhost.");
             return;
         }
 
         if (!precomputedBlobs) {
             setCopyStatus("copying");
-            // Wait a moment in case it just hasn't finished
-            alert("Still preparing the image for share, please try again in a second!");
+            alert("Still preparing the image for copy, please try again in a second!");
             setCopyStatus("idle");
             return;
         }
@@ -113,25 +133,6 @@ export function ActionBar({ imageSrc }: ActionBarProps) {
         try {
             const textContent = `You have received a bouquet! Create your own digital flower arrangement at: ${siteUrl}`;
             const { pngBlob, htmlData } = precomputedBlobs;
-            
-            const file = new File([pngBlob], "bouquet.png", { type: "image/png" });
-
-            // Try native share first (works great on iOS/Android for WhatsApp)
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: "Flowers by Scott",
-                        text: textContent,
-                        files: [file]
-                    });
-                    setCopyStatus("copied");
-                    setTimeout(() => setCopyStatus("idle"), 3000);
-                    return; // exit early if native share works
-                } catch (shareErr) {
-                    console.log("Native share cancelled or failed, falling back to clipboard", shareErr);
-                    // Fall through to clipboard
-                }
-            }
 
             const clipboardItem = new ClipboardItem({
                 "text/html": new Promise((resolve) => resolve(new Blob([htmlData], { type: "text/html" }))),
@@ -150,42 +151,97 @@ export function ActionBar({ imageSrc }: ActionBarProps) {
         }
     };
 
+    const handleNativeShare = async () => {
+        if (!imageSrc) return;
+        
+        if (!precomputedBlobs) {
+            alert("Still preparing the image for share, please try again in a second!");
+            return;
+        }
+
+        const textContent = `You have received a bouquet! Create your own digital flower arrangement at: ${siteUrl}`;
+        const { pngBlob } = precomputedBlobs;
+        // Adding lastModified can help some Windows share targets (like mail apps) recognize the file properly
+        const file = new File([pngBlob], "bouquet.png", { 
+            type: "image/png",
+            lastModified: Date.now()
+        });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    title: "Flowers by Scott",
+                    text: textContent,
+                    files: [file]
+                });
+            } catch (shareErr) {
+                console.log("Native share cancelled or failed", shareErr);
+            }
+        } else {
+            alert("Your device doesn't fully support native sharing for this image. Try saving the image directly!");
+        }
+    };
+
+    // Determine if native share is likely supported (simple check to hide button if clearly not)
+    const canNativeShare = typeof navigator !== 'undefined' && !!navigator.share && !!navigator.canShare;
+
     return (
-        <div className="flex flex-col items-center mt-6 w-full max-w-sm mx-auto">
-            <button
-                onClick={handleCopyHtml}
-                disabled={copyStatus === "copying"}
-                className="btn-main flex items-center justify-center gap-2 w-full bg-[#fde047] hover:bg-[#facc15] text-black font-bold uppercase tracking-wider py-4 transition-all"
-            >
-                {copyStatus === "copied" ? (
-                    <motion.span
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="flex items-center gap-2"
+        <div className="flex flex-col items-center mt-6 w-full max-w-lg mx-auto">
+            
+            <div className={`grid gap-4 w-full ${canNativeShare ? 'grid-cols-3' : 'grid-cols-2'}`}>
+                {/* Download Button */}
+                <button
+                    onClick={handleDownload}
+                    className="flex flex-col items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white rounded-xl p-4 transition-all backdrop-blur-sm border border-white/20 hover:border-white/40"
+                    title="Download Image"
+                >
+                    <Download size={24} className="text-[#fde047]" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Save</span>
+                </button>
+
+                {/* Copy Button */}
+                <button
+                    onClick={handleCopyHtml}
+                    disabled={copyStatus === "copying"}
+                    className="flex flex-col items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white rounded-xl p-4 transition-all backdrop-blur-sm border border-white/20 hover:border-white/40 disabled:opacity-50"
+                    title="Copy Image & HTML"
+                >
+                    {copyStatus === "copied" ? (
+                        <Check size={24} className="text-green-400" />
+                    ) : copyStatus === "copying" ? (
+                        <div className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    ) : (
+                        <Copy size={24} className="text-[#fde047]" />
+                    )}
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-center">
+                        {copyStatus === "copied" ? "Template Copied" : "Copy Email Template"}
+                    </span>
+                </button>
+
+                {/* Native Share Button */}
+                {canNativeShare && (
+                    <button
+                        onClick={handleNativeShare}
+                        className="flex flex-col items-center justify-center gap-2 bg-[#fde047] hover:bg-[#facc15] text-black rounded-xl p-4 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                        title="Share Options"
                     >
-                        <Check size={20} className="text-green-700" /> <span className="text-green-800">Ready to Paste!</span>
-                    </motion.span>
-                ) : copyStatus === "copying" ? (
-                    <span className="flex items-center gap-2 animate-pulse text-black">
-                        <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" /> Fetching Masterpiece...
-                    </span>
-                ) : (
-                    <span className="flex items-center gap-2 text-black">
-                        <Copy size={20} className="text-black" /> Copy & Share &lt;&lt;&lt;
-                    </span>
+                        <Share2 size={24} className="text-black" />
+                        <span className="text-xs font-bold uppercase tracking-wider">Share</span>
+                    </button>
                 )}
-            </button>
+            </div>
 
             {/* Subtext instruction */}
             <AnimatePresence>
                 <motion.div
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-3 text-sm text-center text-primary/80 font-serif italic"
+                    key={copyStatus}
+                    className="mt-4 text-sm text-center text-primary/80 font-serif italic"
                 >
                     {copyStatus === "copied"
-                        ? "Now just press 'Ctrl+V' (or Cmd+V) to paste into any email or social post!"
-                        : "copy and paste into an email, social media post or text."}
+                        ? "Copied! Paste into any email or document."
+                        : "Save your masterpiece, copy it, or send to a friend!"}
                 </motion.div>
             </AnimatePresence>
         </div>

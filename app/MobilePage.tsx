@@ -12,9 +12,10 @@ export function MobileView() {
   const [flowers, setFlowers] = useState<string[]>(["", "", ""]);
   const [recipientName, setRecipientName] = useState("");
   const [senderName, setSenderName] = useState("");
-  const [cardMessage, setCardMessage] = useState("");
+  const [vaseType, setVaseType] = useState("Modern Minimalist");
+  const [customVase, setCustomVase] = useState("");
+  const [message, setMessage] = useState("");
   const [includeBalloons, setIncludeBalloons] = useState(false);
-  const [balloonColor, setBalloonColor] = useState("Gold & White");
   const [isGenerating, setIsGenerating] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   // Track if we have ever generated to switch layout permanently for this session
@@ -39,9 +40,9 @@ export function MobileView() {
           flowers,
           recipientName,
           senderName,
-          cardMessage,
-          includeBalloons,
-          balloonColor
+          vaseStyle: vaseType === "Custom Selection" ? customVase : vaseType,
+          message,
+          includeBalloons
         }),
       });
 
@@ -100,12 +101,14 @@ export function MobileView() {
                 setRecipientName={setRecipientName}
                 senderName={senderName}
                 setSenderName={setSenderName}
-                cardMessage={cardMessage}
-                setCardMessage={setCardMessage}
+                vaseType={vaseType}
+                setVaseType={setVaseType}
+                customVase={customVase}
+                setCustomVase={setCustomVase}
+                message={message}
+                setMessage={setMessage}
                 includeBalloons={includeBalloons}
                 setIncludeBalloons={setIncludeBalloons}
-                balloonColor={balloonColor}
-                setBalloonColor={setBalloonColor}
                 onGenerate={handleGenerate}
                 isGenerating={isGenerating}
               />
@@ -137,12 +140,14 @@ export function MobileView() {
                   setRecipientName={setRecipientName}
                   senderName={senderName}
                   setSenderName={setSenderName}
-                  cardMessage={cardMessage}
-                  setCardMessage={setCardMessage}
+                  vaseType={vaseType}
+                  setVaseType={setVaseType}
+                  customVase={customVase}
+                  setCustomVase={setCustomVase}
+                  message={message}
+                  setMessage={setMessage}
                   includeBalloons={includeBalloons}
                   setIncludeBalloons={setIncludeBalloons}
-                  balloonColor={balloonColor}
-                  setBalloonColor={setBalloonColor}
                   onGenerate={handleGenerate}
                   isGenerating={isGenerating}
                 />

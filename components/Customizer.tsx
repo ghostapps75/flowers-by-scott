@@ -16,12 +16,15 @@ interface CustomizerProps {
     setRecipientName: Dispatch<SetStateAction<string>>;
     senderName: string;
     setSenderName: Dispatch<SetStateAction<string>>;
-    cardMessage: string;
-    setCardMessage: Dispatch<SetStateAction<string>>;
+
+    vaseType: string;
+    setVaseType: Dispatch<SetStateAction<string>>;
+    customVase: string;
+    setCustomVase: Dispatch<SetStateAction<string>>;
+    message: string;
+    setMessage: Dispatch<SetStateAction<string>>;
     includeBalloons: boolean;
     setIncludeBalloons: Dispatch<SetStateAction<boolean>>;
-    balloonColor: string;
-    setBalloonColor: Dispatch<SetStateAction<string>>;
     onGenerate: () => void;
     isGenerating: boolean;
 }
@@ -33,12 +36,15 @@ export function Customizer({
     setRecipientName,
     senderName,
     setSenderName,
-    cardMessage,
-    setCardMessage,
+
+    vaseType,
+    setVaseType,
+    customVase,
+    setCustomVase,
+    message,
+    setMessage,
     includeBalloons,
     setIncludeBalloons,
-    balloonColor,
-    setBalloonColor,
     onGenerate,
     isGenerating,
 }: CustomizerProps) {
@@ -106,11 +112,16 @@ export function Customizer({
         setIsFieldGuideOpen(false);
     };
 
+    const handleCustomVaseChange = (value: string) => {
+        validateContent(value);
+        setCustomVase(value);
+    };
+
     // Block generation if error exists
     const hasError = !!validationError;
 
     return (
-        <div className="glass-panel rounded-xl overflow-hidden relative z-10 p-8 md:p-12 shadow-2xl">
+        <div className="glass-panel rounded-xl overflow-hidden relative z-10 p-6 md:p-8 shadow-2xl">
             {/* Field Guide Modal */}
             <FieldGuideModal
                 isOpen={isFieldGuideOpen}
@@ -119,10 +130,10 @@ export function Customizer({
                 activeTargetIndex={fieldGuideTargetIndex}
             />
 
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-6">
 
-                <div className="flex flex-col gap-6">
-                    <div className="space-y-6 pb-6 border-b border-white/10 text-left">
+                <div className="flex flex-col gap-4">
+                    <div className="space-y-4 pb-4 border-b border-white/10 text-left">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
                                 <span className="text-[16px] font-serif font-bold text-white tracking-[0.15em] ml-1 mb-2 block uppercase drop-shadow-md">To</span>
@@ -144,65 +155,30 @@ export function Customizer({
                                     className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37] rounded-xl px-4 py-3 font-serif text-black font-bold transition-all outline-none placeholder:text-black/40 focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.4)]"
                                 />
                             </div>
-                            <div className="space-y-1 md:col-span-2 mt-2">
-                                <span className="text-[16px] font-serif font-bold text-white tracking-[0.15em] ml-1 mb-2 block uppercase drop-shadow-md">Card Message</span>
-                                <textarea
-                                    placeholder="Write a custom message for the card..."
-                                    value={cardMessage}
-                                    onChange={(e) => setCardMessage(e.target.value)}
-                                    rows={2}
-                                    className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37] rounded-xl px-4 py-3 font-serif text-black font-bold transition-all outline-none placeholder:text-black/40 focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.4)] resize-none"
-                                />
+                        </div>
+                        
+                        <div className="space-y-1 mt-4">
+                            <span className="text-[14px] font-serif font-bold text-white tracking-[0.15em] ml-1 mb-2 block uppercase drop-shadow-md">Card Message</span>
+                            <textarea
+                                placeholder="A beautiful message..."
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37] rounded-xl px-4 py-3 font-serif text-black font-bold transition-all outline-none placeholder:text-black/40 focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.4)] resize-none h-20"
+                            />
+                        </div>
+
+                        <div className="mt-4 flex items-center gap-3 bg-white/5 border border-white/20 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors" onClick={() => setIncludeBalloons(!includeBalloons)}>
+                            <div className={`flex-shrink-0 w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors ${includeBalloons ? 'border-[#D4AF37] bg-[#D4AF37]' : 'border-white/40 bg-transparent'}`}>
+                                {includeBalloons && <svg className="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                             </div>
-
-                            {/* Balloons Feature */}
-                            <div className="md:col-span-2 mt-2 p-4 bg-white/5 border-2 border-[#D4AF37]/30 rounded-xl space-y-4">
-                                <label className="flex items-center gap-3 cursor-pointer group">
-                                    <div className="relative">
-                                        <input
-                                            type="checkbox"
-                                            className="sr-only"
-                                            checked={includeBalloons}
-                                            onChange={(e) => setIncludeBalloons(e.target.checked)}
-                                        />
-                                        <div className={`w-6 h-6 border-2 rounded transition-colors ${includeBalloons ? 'bg-[#D4AF37] border-[#D4AF37]' : 'border-white/50 group-hover:border-[#D4AF37]'}`}>
-                                            {includeBalloons && <svg className="w-5 h-5 text-[#112318] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                                        </div>
-                                    </div>
-                                    <span className="text-[16px] font-serif font-bold text-white tracking-[0.1em] uppercase drop-shadow-md">Add Floating Balloons</span>
-                                </label>
-
-                                <AnimatePresence>
-                                    {includeBalloons && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{ height: "auto", opacity: 1 }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            className="overflow-hidden space-y-1"
-                                        >
-                                            <span className="text-[14px] font-serif font-bold text-white/80 tracking-[0.1em] ml-1 mb-1 block uppercase">Balloon Theme</span>
-                                            <select
-                                                value={balloonColor}
-                                                onChange={(e) => setBalloonColor(e.target.value)}
-                                                title="Select Balloon Color Theme"
-                                                className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37]/50 rounded-lg px-4 py-2.5 font-serif text-black font-bold outline-none cursor-pointer appearance-none"
-                                            >
-                                                <option value="Gold & White">Classic Gold & White</option>
-                                                <option value="Silver & White">Elegant Silver & White</option>
-                                                <option value="Rose Gold">Modern Rose Gold</option>
-                                            </select>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-
+                            <span className="text-[14px] font-serif font-bold text-white uppercase tracking-wider">Include Celebration Balloons (+$0.00)</span>
                         </div>
                         {/* PERSONALIZATION (Added Back) */}
                         <div className="space-y-6">
 
                             {/* Stem Selection Instructions & Actions */}
-                            <div className="mt-6">
-                                <div className="bg-[#FDFBF7] border-4 border-[#265333] rounded-2xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
+                            <div className="mt-4">
+                                <div className="bg-[#FDFBF7] border-4 border-[#265333] rounded-2xl p-4 shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
                                     <h2 className="font-serif text-2xl font-bold text-[#112318] mb-4">Selecting your stems</h2>
                                     <div className="text-[#112318] font-serif mb-4 text-[15px] leading-relaxed font-medium">
                                         <ul className="list-disc ml-5 mt-1 space-y-2 text-[#112318]">
@@ -246,7 +222,7 @@ export function Customizer({
                                 )}
                             </AnimatePresence>
 
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-3">
                                 <AnimatePresence mode="popLayout">
                                     {flowers.map((flower, index) => (
                                         <motion.div
@@ -267,6 +243,49 @@ export function Customizer({
                                             />
                                         </motion.div>
                                     ))}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* VASE INPUT */}
+                            <div className="md:col-span-2 mt-4 space-y-2 relative z-20">
+                                <span className="text-[14px] font-serif font-bold text-white tracking-[0.1em] ml-1 mb-1 block uppercase drop-shadow-md">Vase Style</span>
+                                <div className="grid grid-cols-2 gap-3 mt-2">
+                                    {["Modern Minimalist", "Retro Chic", "Old School", "Custom Selection"].map((style) => (
+                                        <button
+                                            key={style}
+                                            onClick={() => setVaseType(style)}
+                                            className={`p-3 text-sm font-serif font-bold border-2 rounded-xl transition-all w-full text-left flex items-center justify-between cursor-pointer ${
+                                                vaseType === style
+                                                    ? "bg-[#D4AF37] border-[#D4AF37] text-black shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                                                    : "bg-white/5 border-white/20 text-white/50 hover:bg-white/10 hover:border-white/40"
+                                            }`}
+                                            type="button"
+                                        >
+                                            <span>{style === "Custom Selection" ? "Describe Your Own" : style}</span>
+                                            {/* Checkbox Icon */}
+                                            <div className={`flex-shrink-0 w-4 h-4 border-2 rounded-sm flex items-center justify-center transition-colors ${vaseType === style ? 'border-black bg-black' : 'border-white/40 bg-transparent'}`}>
+                                                {vaseType === style && <span className="w-2 h-2 bg-[#D4AF37] rounded-[1px] block" />}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                                <AnimatePresence>
+                                    {vaseType === "Custom Selection" && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: "auto", opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className="overflow-hidden mt-3"
+                                        >
+                                            <input
+                                                type="text"
+                                                placeholder="Type your custom vase style..."
+                                                value={customVase}
+                                                onChange={(e) => handleCustomVaseChange(e.target.value)}
+                                                className="w-full bg-[#FDFBF7] border-2 border-[#D4AF37] rounded-xl px-4 py-3 font-serif text-black font-bold transition-all outline-none placeholder:text-black/40 focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                                            />
+                                        </motion.div>
+                                    )}
                                 </AnimatePresence>
                             </div>
                         </div>

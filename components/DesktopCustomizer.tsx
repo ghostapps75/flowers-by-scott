@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { Sparkles, Wand2, AlertCircle } from "lucide-react";
@@ -16,12 +16,15 @@ interface CustomizerProps {
     setRecipientName: Dispatch<SetStateAction<string>>;
     senderName: string;
     setSenderName: Dispatch<SetStateAction<string>>;
-    cardMessage: string;
-    setCardMessage: Dispatch<SetStateAction<string>>;
+
+    vaseType: string;
+    setVaseType: Dispatch<SetStateAction<string>>;
+    customVase: string;
+    setCustomVase: Dispatch<SetStateAction<string>>;
+    message: string;
+    setMessage: Dispatch<SetStateAction<string>>;
     includeBalloons: boolean;
     setIncludeBalloons: Dispatch<SetStateAction<boolean>>;
-    balloonColor: string;
-    setBalloonColor: Dispatch<SetStateAction<string>>;
     onGenerate: () => void;
     isGenerating: boolean;
 }
@@ -33,12 +36,15 @@ export function DesktopCustomizer({
     setRecipientName,
     senderName,
     setSenderName,
-    cardMessage,
-    setCardMessage,
+
+    vaseType,
+    setVaseType,
+    customVase,
+    setCustomVase,
+    message,
+    setMessage,
     includeBalloons,
     setIncludeBalloons,
-    balloonColor,
-    setBalloonColor,
     onGenerate,
     isGenerating,
 }: CustomizerProps) {
@@ -89,11 +95,16 @@ export function DesktopCustomizer({
         setIsFieldGuideOpen(false);
     };
 
+    const handleCustomVaseChange = (value: string) => {
+        validateContent(value);
+        setCustomVase(value);
+    };
+
     // Block generation if error exists
     const hasError = !!validationError;
 
     return (
-        <div className="comic-panel rounded-lg overflow-hidden relative z-10 p-6 bg-[#FDFBF7] border-[4px] border-black max-h-[700px] overflow-y-auto custom-scrollbar">
+        <div className="comic-panel rounded-lg overflow-hidden relative z-10 p-4 bg-[#FDFBF7] border-[4px] border-black max-h-[700px] overflow-y-auto custom-scrollbar">
             {/* Field Guide Modal */}
             <FieldGuideModal
                 isOpen={isFieldGuideOpen}
@@ -111,7 +122,7 @@ export function DesktopCustomizer({
                     </h2>
                 </div>
                 {/* PERSONALIZATION */}
-                <div className="space-y-2 pb-2 border-b-2 border-black">
+                <div className="space-y-1 pb-1 border-b-2 border-black">
                     <label className="block text-[10px] font-display tracking-widest uppercase text-black">
                         The Details
                     </label>
@@ -138,65 +149,39 @@ export function DesktopCustomizer({
                             />
                         </div>
                     </div>
-                </div>
-
-                <div className="space-y-0.5 mt-2">
-                    <span className="text-[9px] text-black uppercase font-bold ml-1">Card Message</span>
-                    <textarea
-                        placeholder="Your custom message..."
-                        value={cardMessage}
-                        onChange={(e) => setCardMessage(e.target.value)}
-                        rows={2}
-                        className="w-full comic-input rounded-none px-2 py-1.5 text-sm font-body transition-all outline-none resize-none"
-                    />
-                </div>
-
-                {/* Balloons Feature Desktop */}
-                <div className="mt-3 p-3 border-4 border-black bg-[#FFD700]/20 space-y-3 relative overflow-hidden">
-                    <label className="flex items-center gap-2 cursor-pointer group relative z-10" title="Include Balloons">
-                        <div className="relative">
-                            <input
-                                type="checkbox"
-                                className="sr-only"
-                                checked={includeBalloons}
-                                onChange={(e) => setIncludeBalloons(e.target.checked)}
-                            />
-                            <div className={`w-5 h-5 border-[3px] border-black transition-colors ${includeBalloons ? 'bg-black' : 'bg-white'}`}>
-                                {includeBalloons && <svg className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>}
-                            </div>
+                    
+                    <div className="space-y-0.5 mt-2">
+                        <span className="text-[9px] text-black uppercase font-bold ml-1">Card Message</span>
+                         <textarea
+                              placeholder="Write a sweet delivery message..."
+                              value={message}
+                              onChange={(e) => setMessage(e.target.value)}
+                              className="w-full comic-input rounded-none px-2 py-1.5 text-sm font-body transition-all outline-none resize-none h-12"
+                          />
+                    </div>
+                    <label className="flex items-center gap-2 mt-2 pb-2 cursor-pointer group">
+                        <div className={`w-4 h-4 border-2 border-black flex items-center justify-center transition-colors ${includeBalloons ? 'bg-[#D4A373]' : 'bg-white'}`}>
+                            {includeBalloons && <svg className="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                         </div>
-                        <span className="text-[12px] font-comic font-black uppercase text-black tracking-widest translate-y-[1px]">Add Balloons!</span>
+                        <span className="text-[10px] text-black uppercase font-bold group-hover:text-gray-700 transition-colors">Attach Celebration Balloons (+$0.00)</span>
+                        <input
+                            type="checkbox"
+                            checked={includeBalloons}
+                            onChange={(e) => setIncludeBalloons(e.target.checked)}
+                            className="hidden"
+                        />
                     </label>
-
-                    <AnimatePresence>
-                        {includeBalloons && (
-                            <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden space-y-0.5 relative z-10"
-                            >
-                                <span className="text-[9px] text-black uppercase font-bold ml-1">Theme</span>
-                                <select
-                                    value={balloonColor}
-                                    onChange={(e) => setBalloonColor(e.target.value)}
-                                    title="Select Balloon Color Theme"
-                                    className="w-full comic-input rounded-none px-2 py-1.5 text-sm font-body outline-none cursor-pointer appearance-none bg-white font-bold"
-                                >
-                                    <option value="Gold & White">Gold & White</option>
-                                    <option value="Silver & White">Silver & White</option>
-                                    <option value="Rose Gold">Rose Gold</option>
-                                </select>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </div>
+
+
+
+
 
             </div>
 
             {/* FLOWER INPUTS */}
-            <div className="space-y-2">
-                <div className="space-y-2 border-b border-black pb-2">
+            <div className="space-y-1 mt-2">
+                <div className="space-y-1 border-b border-black pb-1">
                     <div className="flex items-center justify-between">
                         <label className="block text-[12px] font-display tracking-widest uppercase text-black font-bold">
                             Stems
@@ -254,6 +239,53 @@ export function DesktopCustomizer({
                         ))}
                     </AnimatePresence>
                 </div>
+            </div>
+
+            {/* VASE INPUT */}
+            <div className="space-y-1 mt-2 mb-3">
+                <div className="flex items-center justify-between">
+                    <label className="block text-[12px] font-display tracking-widest uppercase text-black font-bold">
+                        Vase Style
+                    </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                    {["Modern Minimalist", "Retro Chic", "Old School", "Custom Selection"].map((style) => (
+                        <button
+                            key={style}
+                            onClick={() => setVaseType(style)}
+                            className={`px-2 py-2 text-[11px] font-body border-2 border-black font-bold transition-colors w-full text-left flex items-center justify-between cursor-pointer ${
+                                vaseType === style
+                                    ? "bg-[#D4A373] text-black shadow-[2px_2px_0_0_rgba(0,0,0,1)]"
+                                    : "bg-white text-gray-400 hover:bg-gray-100"
+                            }`}
+                            type="button"
+                        >
+                            <span>{style === "Custom Selection" ? "Describe Your Own" : style}</span>
+                            {/* Checkbox Icon */}
+                            <div className={`flex-shrink-0 w-3.5 h-3.5 border-2 border-black flex items-center justify-center ${vaseType === style ? 'bg-black' : 'bg-white'}`}>
+                                {vaseType === style && <span className="w-1.5 h-1.5 bg-[#D4A373] block" />}
+                            </div>
+                        </button>
+                    ))}
+                </div>
+                <AnimatePresence>
+                    {vaseType === "Custom Selection" && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="mt-2 overflow-hidden"
+                        >
+                            <input
+                                type="text"
+                                placeholder="Type your vase style..."
+                                value={customVase}
+                                onChange={(e) => handleCustomVaseChange(e.target.value)}
+                                className="w-full comic-input rounded-none px-2 py-1.5 text-sm font-body transition-all outline-none"
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
 

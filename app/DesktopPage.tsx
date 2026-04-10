@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { DesktopCustomizer } from "@/components/DesktopCustomizer";
@@ -20,9 +20,10 @@ export function DesktopView() {
   const [flowers, setFlowers] = useState<string[]>(["", "", ""]);
   const [recipientName, setRecipientName] = useState("");
   const [senderName, setSenderName] = useState("");
-  const [cardMessage, setCardMessage] = useState("");
+  const [vaseType, setVaseType] = useState("Modern Minimalist");
+  const [customVase, setCustomVase] = useState("");
+  const [message, setMessage] = useState("");
   const [includeBalloons, setIncludeBalloons] = useState(false);
-  const [balloonColor, setBalloonColor] = useState("Gold & White");
   const [isGenerating, setIsGenerating] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   // Track if we have ever generated to switch layout permanently for this session
@@ -47,9 +48,9 @@ export function DesktopView() {
           flowers,
           recipientName,
           senderName,
-          cardMessage,
-          includeBalloons,
-          balloonColor
+          vaseStyle: vaseType === "Custom Selection" ? customVase : vaseType,
+          message,
+          includeBalloons
         }),
       });
 
@@ -73,45 +74,58 @@ export function DesktopView() {
     }
   };
   return (
-    <div className="relative flex flex-col w-full h-screen bg-[#051208] overflow-hidden">
+    <div className="relative flex flex-col min-h-screen bg-[#051208] overflow-hidden items-center justify-center p-8">
 
-      {/* FULL-SCREEN BANNER */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={bannerImg}
-          alt="Flowers by Scott"
-          fill
-          className="object-cover"
-          priority
-          quality={100}
-          unoptimized
-        />
-        {/* Subtle dark gradient overlay for general depth and UI readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-      </div>
+      {/* Subtle radial gradient background similar to mobile theme */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#265333] via-[#051208] to-[#010402] pointer-events-none opacity-60"></div>
 
-      <style>{`
-        .responsive-ui-panel { transform-origin: bottom right; transition: transform 0.3s ease; }
-        @media (min-width: 1536px) { .responsive-ui-panel { transform: scale(1.25); } }
-        @media (min-width: 1800px) { .responsive-ui-panel { transform: scale(1.5); } }
-        @media (min-width: 2200px) { .responsive-ui-panel { transform: scale(1.8); } }
-        @media (min-width: 2600px) { .responsive-ui-panel { transform: scale(2.0); } }
-      `}</style>
+      {/* Main Split Screen Container */}
+      <div className="w-full max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_550px] gap-12 items-center">
+        
+        {/* Left Column - Branding and Header */}
+        <div className="flex flex-col items-center xl:items-start justify-center xl:pl-12">
+            <motion.div 
+               initial={{ opacity: 0, y: 30 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.8, ease: "easeOut" }}
+               className="relative overflow-hidden border-2 border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+            >
+              <Image
+                src={bannerImg}
+                alt="Flowers by Scott"
+                width={800}
+                height={500}
+                className="w-full h-auto object-cover max-w-lg xl:max-w-2xl"
+                priority
+                quality={100}
+                unoptimized
+              />
+            </motion.div>
+            
+            <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ delay: 0.5, duration: 1 }}
+               className="mt-8 text-center xl:text-left xl:pl-4"
+            >
+               <h1 className="text-3xl font-display text-white/90 drop-shadow-md tracking-wider uppercase">Design Your Masterpiece</h1>
+               <p className="mt-3 text-lg text-white/70 font-serif italic max-w-lg mx-auto xl:mx-0">
+                 Select curated botanicals and let our elegant algorithm assemble a unique, stunning arrangement.
+               </p>
+            </motion.div>
+        </div>
 
-      {/* UI PANEL - Pinned to Bottom-Right but offset 10% left */}
-      <div
-        className="absolute bottom-6 right-[14%] z-10 w-full max-w-[550px] pointer-events-none responsive-ui-panel"
-      >
-        <div className="pointer-events-auto">
+        {/* Right Column - UI Panel */}
+        <div className="w-full max-w-[550px] mx-auto relative z-20">
           <motion.div
             layoutId="brand-container"
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, x: 50 }}
             animate={
               hasGenerated
-                ? { opacity: 0.3, scale: 1, filter: "blur(4px)" }
-                : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                ? { opacity: 0.3, scale: 0.95, filter: "blur(4px)" }
+                : { opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }
             }
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className={`w-full ${hasGenerated ? "pointer-events-none" : "pointer-events-auto"}`}
           >
             <DesktopCustomizer
@@ -121,12 +135,14 @@ export function DesktopView() {
               setRecipientName={setRecipientName}
               senderName={senderName}
               setSenderName={setSenderName}
-              cardMessage={cardMessage}
-              setCardMessage={setCardMessage}
+              vaseType={vaseType}
+              setVaseType={setVaseType}
+              customVase={customVase}
+              setCustomVase={setCustomVase}
+              message={message}
+              setMessage={setMessage}
               includeBalloons={includeBalloons}
               setIncludeBalloons={setIncludeBalloons}
-              balloonColor={balloonColor}
-              setBalloonColor={setBalloonColor}
               onGenerate={handleGenerate}
               isGenerating={isGenerating}
             />
@@ -135,7 +151,7 @@ export function DesktopView() {
       </div>
 
       {/* INDEPENDENT FOOTER */}
-      <footer className="absolute bottom-2 right-[14%] z-10 text-right text-[9px] font-body font-bold text-white/40 drop-shadow-[1px_1px_0_black]">
+      <footer className="absolute bottom-4 left-0 right-0 w-full z-10 text-center text-[10px] font-body font-bold text-white/40 tracking-widest drop-shadow-[1px_1px_0_black] uppercase">
         <p>Hand-coded with love by Scott. &copy; 2026 Flowers by Scott.</p>
       </footer>
 
@@ -144,10 +160,10 @@ export function DesktopView() {
         {hasGenerated && imageSrc && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9, backdropFilter: "blur(0px)" }}
-            animate={{ opacity: 1, scale: 1, backdropFilter: "blur(8px)" }}
+            animate={{ opacity: 1, scale: 1, backdropFilter: "blur(12px)" }}
             exit={{ opacity: 0, scale: 0.9, backdropFilter: "blur(0px)" }}
             transition={{ type: "spring", bounce: 0.4, duration: 0.8 }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-black/70"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-black/80"
           >
             <div className="flex flex-col items-center gap-6 w-full max-w-none">
               <FloatingVase imageSrc={imageSrc} isLoading={isGenerating} />

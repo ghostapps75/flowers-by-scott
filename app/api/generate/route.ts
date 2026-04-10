@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
     try {
-        const { flowers, recipientName, senderName, cardMessage, includeBalloons, balloonColor } = await req.json();
+        const { flowers, recipientName, senderName, vaseStyle } = await req.json();
 
         if (!process.env.GEMINI_API_KEY) {
             console.error("CRITICAL: GEMINI_API_KEY is missing from environment variables.");
@@ -12,24 +12,18 @@ export async function POST(req: Request) {
 
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-        let messageText = "";
-        if (cardMessage && cardMessage.trim() !== "") {
-            messageText = `'To ${recipientName},\n${cardMessage}\n${senderName ? `- ${senderName}` : ""}'`;
-        } else {
-            messageText = `'To ${recipientName}, with love${senderName ? ` - ${senderName}` : ""}'`;
-        }
+        let messageText = `"To ${recipientName}, with love${senderName ? ` - ${senderName}` : ""}"`;
 
-        let prompt = `A luxury floral arrangement featuring ${flowers.join(", ")}.
+        let prompt = `CRITICAL INSTRUCTION: The most important part of this image is the text written on the prominently featured cream-colored gift card.
+    The text MUST BE EXACTLY: ${messageText}
+    Pay extremely close attention to the exact spelling of the names! Do not add or miss any letters. Ensure perfect typography.
+        
+    Now for the rest of the image: A luxury floral arrangement featuring ${flowers.join(", ")}.
+    The arrangement should be placed in a ${vaseStyle || "modern minimalist"} vase.
     Style: High-end editorial photography, 8k resolution, cinematic lighting.
-    Include a prominent, large, elegant cream-colored gift card resting at the base of the arrangement.
-    The card must be clearly legible and occupy a significant portion of the lower foreground.
-    The text on the card must be large and in a clean script: ${messageText}.`;
+    The gift card must be resting at the base of the arrangement, clearly legible, and occupy a significant portion of the lower foreground.`;
 
-        if (includeBalloons) {
-            prompt += `
-    Also include elegant, high-quality, glossy helium balloons floating elegantly near or tied to the arrangement. 
-    The balloons should perfectly match a '${balloonColor}' color theme and elevate the overall luxurious feel of the composition.`;
-        }
+
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash-image",
