@@ -109,7 +109,7 @@ export function DesktopCustomizer({
             {/* Header Image (Framed Header) */}
             <div className="w-full flex-shrink-0 bg-[#F4F7EE] border-b-2 border-[#2E3224] flex items-center justify-center p-4 sm:p-6">
                 <Image
-                    src="/images/banner.jpg"
+                    src="/images/banner.jpg?v=2"
                     alt="Flowers by Scott Instructions"
                     width={800}
                     height={400}
