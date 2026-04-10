@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
     try {
-        const { flowers, recipientName, senderName, vaseStyle } = await req.json();
+        const { flowers, recipientName, senderName, vaseStyle, message, includeBalloons } = await req.json();
 
         if (!process.env.GEMINI_API_KEY) {
             console.error("CRITICAL: GEMINI_API_KEY is missing from environment variables.");
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-        let messageText = `"To ${recipientName}, with love${senderName ? ` - ${senderName}` : ""}"`;
+        let messageText = `"To ${recipientName}, ${message ? message : 'with love'}${senderName ? ` - ${senderName}` : ""}"`;
 
         let prompt = `CRITICAL INSTRUCTION: The most important part of this image is the text written on the prominently featured cream-colored gift card.
     The text MUST BE EXACTLY: ${messageText}
@@ -20,6 +20,7 @@ export async function POST(req: Request) {
         
     Now for the rest of the image: A luxury floral arrangement featuring ${flowers.join(", ")}.
     The arrangement should be placed in a ${vaseStyle || "modern minimalist"} vase.
+    ${includeBalloons ? "Floating elegantly above and around the arrangement should be festive celebration balloons." : ""}
     Style: High-end editorial photography, 8k resolution, cinematic lighting.
     The gift card must be resting at the base of the arrangement, clearly legible, and occupy a significant portion of the lower foreground.`;
 

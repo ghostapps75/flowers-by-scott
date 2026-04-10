@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Lora, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
-const lora = Lora({
+const cormorant = Cormorant_Garamond({
   variable: "--font-display",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -41,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${lora.variable} ${inter.variable}`}>
-      <body suppressHydrationWarning className="antialiased bg-background text-foreground min-h-screen selection:bg-black selection:text-white">
+    <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${inter.variable}`}>
+      <body suppressHydrationWarning className="antialiased bg-background text-foreground min-h-screen selection:bg-[#7A8268] selection:text-white">
         {children}
       </body>
     </html>

@@ -191,73 +191,89 @@ h3 {
 }
 
 /* ----------------------------------- */
-/* OG Desktop Comic Theme Utilities    */
+/* Illustrated Editorial Utilities     */
 /* ----------------------------------- */
-.comic-panel,
-.comic-card,
-.comic-input {
+.editorial-panel {
+  background: #FDFFFA;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: all 0.3s ease-in-out;
+}
+
+@media (min-width: 640px) {
+  .editorial-panel {
+    border: 2px solid #2E3224; /* Strong dark stroke to match illustration outlines */
+    border-radius: 24px;
+    box-shadow: 0px 8px 30px rgba(46, 50, 36, 0.08); /* Soft floating shadow */
+  }
+}
+
+.editorial-input {
   background: #FFFFFF;
-  border: 4px solid #000000;
-  position: relative;
-  box-shadow: 8px 8px 0px 0px #000000;
+  border: 2px solid #2E3224;
+  border-radius: 12px;
+  color: #1A1B18;
+  padding: 12px 20px;
+  font-family: var(--font-body), sans-serif;
+  box-shadow: 2px 2px 0px rgba(46, 50, 36, 0.15);
   transition: all 0.2s ease-in-out;
 }
 
-.comic-input {
-  color: #000000;
-  box-shadow: 4px 4px 0px 0px #000000;
-  font-weight: bold;
+textarea.editorial-input {
+  border-radius: 12px;
+  padding: 16px 20px;
 }
 
-.comic-input::placeholder {
-  color: rgba(0, 0, 0, 0.4);
-  font-weight: normal;
+.editorial-input::placeholder {
+  color: #A3A69C;
 }
 
-.comic-input:focus {
+.editorial-input:focus {
   outline: none;
-  background: #FDFBF7;
-  box-shadow: 6px 6px 0px 0px #000000;
-  transform: translate(-2px, -2px);
+  border-color: #2E3224;
+  background: #FFFFFF;
+  box-shadow: 3px 3px 0px rgba(46, 50, 36, 0.3);
+  transform: translate(-1px, -1px);
 }
 
-/* Main Button - Elegant Brutalist Button */
-.btn-desktop {
-  display: inline-block;
-  background: var(--color-primary);
-  color: #000000;
-  font-family: var(--font-display), "Bangers", impact, sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 0.05em;
-  padding: 12px 40px;
-  border: 4px solid #000000;
-  border-radius: 0px;
+.btn-editorial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2E3224;
+  color: #FDFFFA;
+  font-family: var(--font-body), sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  padding: 18px 40px;
+  border: 2px solid #2E3224; 
+  border-radius: 100px;
   cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
-  text-shadow: 2px 2px 0px #FFFFFF;
-  box-shadow: 6px 6px 0px 0px #000000;
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 3px 3px 0px rgba(46, 50, 36, 0.3);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-desktop:hover:not(:disabled) {
-  background: #FDFBF7;
-  color: #000000;
+.btn-editorial:hover:not(:disabled) {
+  background: #1A1B18;
+  border-color: #1A1B18;
   transform: translate(-2px, -2px);
-  box-shadow: 8px 8px 0px 0px #000000;
+  box-shadow: 5px 5px 0px rgba(46, 50, 36, 0.4);
 }
 
-.btn-desktop:active:not(:disabled) {
-  transform: translate(6px, 6px);
-  box-shadow: 0px 0px 0px 0px #000000;
+.btn-editorial:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
-.btn-desktop:disabled {
-  background: #CCCCCC;
-  color: #666666;
-  text-shadow: none;
-  border-color: #666666;
-  box-shadow: 4px 4px 0px 0px #666666;
+.btn-editorial:disabled {
+  background: #E1E4DA;
+  border-color: #E1E4DA;
+  color: #A3A69C;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }

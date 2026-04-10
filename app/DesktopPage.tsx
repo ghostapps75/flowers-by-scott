@@ -29,11 +29,6 @@ export function DesktopView() {
   // Track if we have ever generated to switch layout permanently for this session
   const [hasGenerated, setHasGenerated] = useState(false);
 
-  // Prepopulate on load
-  useEffect(() => {
-    setFlowers(getHarmoniousTriplet());
-  }, []);
-
   const handleGenerate = async () => {
     setIsGenerating(true);
     setIsGenerating(true);
@@ -74,49 +69,14 @@ export function DesktopView() {
     }
   };
   return (
-    <div className="relative flex flex-col min-h-screen bg-[#051208] overflow-hidden items-center justify-center p-8">
+    <div className="relative flex flex-col min-h-[100dvh] overflow-x-hidden items-center justify-start lg:justify-center p-0 lg:p-8 bg-[#F3EFE6]">
+      
+      {/* Subtle organic noise/texture (optional) */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
 
-      {/* Subtle radial gradient background similar to mobile theme */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#265333] via-[#051208] to-[#010402] pointer-events-none opacity-60"></div>
-
-      {/* Main Split Screen Container */}
-      <div className="w-full max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_550px] gap-12 items-center">
-        
-        {/* Left Column - Branding and Header */}
-        <div className="flex flex-col items-center xl:items-start justify-center xl:pl-12">
-            <motion.div 
-               initial={{ opacity: 0, y: 30 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.8, ease: "easeOut" }}
-               className="relative overflow-hidden border-2 border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-            >
-              <Image
-                src={bannerImg}
-                alt="Flowers by Scott"
-                width={800}
-                height={500}
-                className="w-full h-auto object-cover max-w-lg xl:max-w-2xl"
-                priority
-                quality={100}
-                unoptimized
-              />
-            </motion.div>
-            
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               transition={{ delay: 0.5, duration: 1 }}
-               className="mt-8 text-center xl:text-left xl:pl-4"
-            >
-               <h1 className="text-3xl font-display text-white/90 drop-shadow-md tracking-wider uppercase">Design Your Masterpiece</h1>
-               <p className="mt-3 text-lg text-white/70 font-serif italic max-w-lg mx-auto xl:mx-0">
-                 Select curated botanicals and let our elegant algorithm assemble a unique, stunning arrangement.
-               </p>
-            </motion.div>
-        </div>
-
-        {/* Right Column - UI Panel */}
-        <div className="w-full max-w-[550px] mx-auto relative z-20">
+      {/* Main Single Column Container */}
+      <div className="w-full max-w-[700px] mx-auto relative z-10 flex flex-col items-center">
+        <div className="w-full max-w-[650px] mx-auto relative z-20">
           <motion.div
             layoutId="brand-container"
             initial={{ opacity: 0, x: 50 }}
@@ -151,7 +111,7 @@ export function DesktopView() {
       </div>
 
       {/* INDEPENDENT FOOTER */}
-      <footer className="absolute bottom-4 left-0 right-0 w-full z-10 text-center text-[10px] font-body font-bold text-white/40 tracking-widest drop-shadow-[1px_1px_0_black] uppercase">
+      <footer className="absolute bottom-6 w-full text-center z-10 text-[10px] font-body font-bold text-[#0A150D]/40 tracking-[0.2em] uppercase hidden lg:block">
         <p>Hand-coded with love by Scott. &copy; 2026 Flowers by Scott.</p>
       </footer>
 
